@@ -9,10 +9,10 @@ urlpatterns = [
     path('code/', views.otpcode, name='code'),
     path('signout/', views.signout, name='signout'),
     path('signup/', views.signup, name='signup'),
-    path('details/', views.p_details, name='details'),
     path('products/', views.p_view, name='products'),
     path('<slug:category_slug>/', views.p_view, name='products_by_category'),
-    
+    path('<slug:category_slug>/<slug:product_slug>/', views.p_details, name='products_by_category'),
+  
 
    
    
