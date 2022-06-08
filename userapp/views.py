@@ -14,6 +14,7 @@ from django.contrib.auth.models import User
 from twilio.rest import Client
 from django.contrib import auth
 from django.contrib.auth.decorators import login_required
+from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator
 
 
 @cache_control(no_cache=True, must_revalidate=True, no_store=True)
@@ -167,16 +168,21 @@ def p_view(request, category_slug=None):
 
     if category_slug   != None:
         categories = get_object_or_404(Category, slug=category_slug)
-        products   = Product.objects.filter(category=categories, is_available=True)
+        products        = Product.objects.filter(category=categories, is_available=True)
+        paginator       = Paginator(products,3)
+        page            = request.GET.get('page')
+        paged_product   = paginator.get_page(page)
     else:
-        products = Product.objects.all().filter(is_available=True)
+        products        = Product.objects.all().filter(is_available=True)
+        paginator       = Paginator(products,3)
+        page            = request.GET.get('page')
+        paged_product   = paginator.get_page(page)
 
     context = {
-            'products' : products,
+            'products' : paged_product,
     }
 
     return render(request, 'user/products.html', context)
-
 
 
    

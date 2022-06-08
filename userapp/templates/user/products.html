@@ -210,6 +210,11 @@
         <!-- BEGIN NAVIGATION -->
         <div class="header-navigation ">
           <ul>
+            <li >
+              <a href="/products/">
+                All Products
+                
+              </a>
             <li class="dropdown">
               <a class="dropdown-toggle" data-toggle="dropdown" data-target="#" href="javascript:;">
                 Woman 
@@ -353,16 +358,9 @@
                 </li>
               </ul>
             </li>
-            <li class="dropdown">
-              <a class="dropdown-toggle" data-toggle="dropdown" data-target="#" href="javascript:;">
-                Pages 
+
                 
-              </a>
-                
-            <ul class="dropdown-menu">
-                <!-- <li class="active"><a href="shop-index.html">Home Default</a></li> -->
-              </ul> 
-            </li>
+         
             
             
             <!-- BEGIN TOP SEARCH -->
@@ -530,7 +528,7 @@
                       <img src="{{product.images.url}}" class="img-responsive" alt="Berry Lace Dress">
                       <div>
                         <a href="{{product.images.url}}" class="btn btn-default fancybox-button">Zoom</a>
-                        <a href="#pop" class="btn btn-default fancybox-fast-view">View</a>
+                        <a href="#pop{{forloop.counter}}" class="btn btn-default fancybox-fast-view">View</a>
                       </div>
                     </div>
                     <h3><a href="{{ product.get_url }}">{{product.product_name}}</a></h3>
@@ -548,17 +546,40 @@
               <!-- BEGIN PAGINATOR -->
               <div class="row">
                 <div class="col-md-4 col-sm-4 items-info">Items 1 to 9 of 10 total</div>
+             
                 <div class="col-md-8 col-sm-8">
+                  {% if products.has_other_pages  %}
                   <ul class="pagination pull-right">
-                    <li><a href="javascript:;">&laquo;</a></li>
-                    <li><span>1</span></li>
-                    <li><a href="javascript:;">2</a></li>
-                    <li><a href="javascript:;">3</a></li>
-                    <li><a href="javascript:;">4</a></li>
-                    <li><a href="javascript:;">5</a></li>
-                    <li><a href="javascript:;">&raquo;</a></li>
+                  {% if products.has_previous %}
+                    <li><a href="?page={{ products.previous_page_number }}">&laquo;</a></li>
+                      {% else %}
+                      <li class="page-item disabled"><a href="#">&laquo;</a></li>
+
+                      {% endif %}
+
+                    {% for i in products.paginator.page_range %}
+                      {% if products.number == i %}
+                      <li class="page-item active"><a class="page-link" href="#">{{i}}</a></li>
+                      {% else %}
+                      <li class="page-item "><a class="page-link" href="?page={{i}}">{{i}}</a></li>
+                      {% endif %}
+
+                    {% endfor %}
+         
+
+                    {% if products.has_next %}
+
+                    <li class="page-item"> <a class="page-link"  href="?page={{ products.next_page_number }}">&raquo;</a></li>
+
+                    {% else %}
+                    <li class="page-item dsibaled"><a href="#">&raquo;</a></li>
+
+                    {% endif %}
+                  
                   </ul>
+                  {% endif %}
                 </div>
+               
               </div>
               <!-- END PAGINATOR -->
             </div>
@@ -721,7 +742,7 @@
     {% for prod in products %}
        
     
-    <div id="pop" style="display: none; width: 700px;">
+    <div id="pop{{forloop.counter}}" style="display: none; width: 700px;">
      
       <div class="product-page ">
        
@@ -736,7 +757,7 @@
             </div>
           
             <div class="product-other-images">
-              <a href="javascript:;" class="active"><img alt="Berry Lace Dress" src="{{prod.images.url}}"></a>
+              <a href="javascript:;" class="active"><img alt="Berry Lace Dress" src="{% static 'assets\pages\img\people\img1-large.jpg' %} "></a>
               <a href="javascript:;"><img alt="Berry Lace Dress" src="{{prod.images.url}}"></a>
               <a href="javascript:;"><img alt="Berry Lace Dress" src="{{prod.images.url}}"></a>
             </div>
