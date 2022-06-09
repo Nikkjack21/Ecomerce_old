@@ -553,7 +553,7 @@
                   {% if products.has_previous %}
                     <li><a href="?page={{ products.previous_page_number }}">&laquo;</a></li>
                       {% else %}
-                      <li class="page-item disabled"><a href="#">&laquo;</a></li>
+                      <li class="page-item disabled"><a href="javascript:;">&laquo;</a></li>
 
                       {% endif %}
 
@@ -572,7 +572,7 @@
                     <li class="page-item"> <a class="page-link"  href="?page={{ products.next_page_number }}">&raquo;</a></li>
 
                     {% else %}
-                    <li class="page-item dsibaled"><a href="#">&raquo;</a></li>
+                    <li class="page-item dsibaled"> <a href="javascript:;">&raquo;</a></li>
 
                     {% endif %}
                   

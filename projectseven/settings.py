@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     'store',
     'admins',
     'django_twilio',
+    'cartapp',
     
 ]
 

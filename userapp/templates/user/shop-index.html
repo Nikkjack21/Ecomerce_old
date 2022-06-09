@@ -111,7 +111,7 @@
                     <ul class="list-unstyled list-inline pull-right">
                       <li><a href="shop-account.html">My Account</a></li>
                       <li><a href="shop-wishlist.html">My Wishlist</a></li>
-                      <li><a href="shop-checkout.html">Checkout</a></li>
+                      <li><a href="cart/">Checkout</a></li>
                       {% if user.is_authenticated %}
                       <li>Welcome, {{user.username}}</li>
                       <li><a href="signout/">Log Out</a></li>
@@ -204,7 +204,7 @@
                 </li>
               </ul> -->
               <div class="text-right">
-                <a href="shop-shopping-cart.html" class="btn btn-default">View Cart</a>
+                <a href="cart/" class="btn btn-default">View Cart</a>
                 <a href="shop-checkout.html" class="btn btn-primary">Checkout</a>
               </div>
             </div>
