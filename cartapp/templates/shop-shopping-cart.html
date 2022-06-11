@@ -216,7 +216,7 @@
         <div class="header-navigation ">
           <ul>
             <li >
-              <a href="products/">
+              <a href="/products/">
                 All Products
                 
               </a>
@@ -404,6 +404,13 @@
             <div class="goods-page">
               <div class="goods-data clearfix">
                 <div class="table-wrapper-responsive">
+                  {% if not cart_items %}
+                    <h2>Oops! Your cart is empty,</h2>
+                    <h5>To Continue shopping,</h5>
+                    <h3>Click below</h3>
+
+                  {% else %}
+
                 <table summary="Shopping cart">
                   {% for cart_item in cart_items %}
                   <tr>
@@ -428,9 +435,9 @@
                     </td>
                     <td class="goods-page-quantity">
                       <div class="product-quantity">
-                         <a href="{% url 'add_cart' cart_item.product.id %}"><input id="product-quantity" type="text" value="{{cart_item.quantity}}" readonly class="form-control input-sm"></a>
+                         <a href="{% url 'add_cart' cart_item.product.id %}"><input id="product-quantity" type="number" value="{{cart_item.quantity}}" readonly class="form-control input-sm"></a>
                       </div>
-                    </td>
+                    </td>{% url 'add_cart' cart_item.product.id %}
                     <td class="goods-page-price">
                       <strong><span>Rs.</span>{{cart_item.product.price}}</strong>
                     </td>
@@ -438,14 +445,17 @@
                       <strong><span>Rs.</span>{{cart_item.sub_total}}</strong>
                     </td>
                     <td class="del-goods-col">
-                      <a class="del-goods" href="javascript:;">&nbsp;</a>
+                      <a class="del-goods" href="{% url 'remove_cart_item' cart_item.product.id %}">&nbsp;</a>
                     </td>
                   </tr>
                   {% endfor %}
                
                 </table>
+                {% endif %}
                 </div>
+                {% if not cart_items %}
 
+                {% else %}
                 <div class="shopping-total">
                   <ul>
                     <li>
@@ -454,7 +464,7 @@
                     </li>
                     <li>
                       <em>tax</em>
-                      <strong class="price">{{tax}}<span>%</span></strong>
+                      <strong class="price"><span>Rs.</span>{{tax}}</strong>
                     </li>
                     <li class="shopping-total-price">
                       <em>Total</em>
@@ -462,9 +472,11 @@
                     </li>
                   </ul>
                 </div>
+                {% endif %}
               </div>
               <button class="btn btn-default" type="submit">Continue shopping <i class="fa fa-shopping-cart"></i></button>
-              <button class="btn btn-primary" type="submit">Checkout <i class="fa fa-check"></i></button>
+              
+              <a class="btn btn-primary" href="{% url 'checkout' %}">Checkout <i class="fa fa-check"></i></a>
             </div>
           </div>
           <!-- END CONTENT -->

@@ -515,10 +515,17 @@
                     </div>
                   </div>
                   <div class="product-page-cart">
+                    {% if in_cart %}
+
+                    <a href="" class="btn btn-danger" type="submit">Added to cart  </a>
+                    <a href="{% url 'cart' %}" class="btn btn-info" type="submit">view cart</i></a>
+
+                    {% else %}
                     <div class="product-quantity">
                         <input id="product-quantity" type="text" value="1" readonly class="form-control input-sm">
                     </div>
                     <a href="{% url 'add_cart' single_product.id %} " class="btn btn-primary" type="submit">Add to cart</a>
+                    {% endif %}
                   </div>
                   <div class="review">
                     <input type="range" value="4" id="backing4" step="0.25" style="display:none">

@@ -6,6 +6,7 @@ from django.shortcuts import get_object_or_404, redirect, render
 from django.http import HttpResponse
 from django.contrib.auth import authenticate,login,logout
 from django.views.decorators.cache import cache_control
+from cartapp.models import CartItem
 from store.models import Product
 from category.models import Category
 from accounts.models import Account
@@ -15,6 +16,8 @@ from twilio.rest import Client
 from django.contrib import auth
 from django.contrib.auth.decorators import login_required
 from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator
+from cartapp.views import _cart_id
+from django.http import HttpResponse
 
 
 @cache_control(no_cache=True, must_revalidate=True, no_store=True)
@@ -190,10 +193,13 @@ def p_view(request, category_slug=None):
 def p_details(request, category_slug, product_slug):
     try:
         single_product   = Product.objects.get(category__slug=category_slug, slug=product_slug)
+        in_cart          = CartItem.objects.filter(cart__cart_id=_cart_id(request), product=single_product).exists()
+
     except Exception as e:
         raise e
 
     context = {
-        'single_product': single_product
+        'single_product': single_product,
+        'in_cart': in_cart
     }
     return render(request,'user/product_detail.html', context)

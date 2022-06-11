@@ -18,7 +18,7 @@ from django.views.decorators.cache import cache_control
 
 @cache_control (must_revalidate=True, no_cache=True, no_store=True)
 def admin_signin(request):
-    if request.user.is_authenticated:
+    if request.user.is_authenticated and request.user.is_admin:
         return redirect(admin_home)
     if request.method == 'POST':
         username        = request.POST.get('username')
