@@ -12,7 +12,7 @@ from store.models import Product
 from slugify import slugify
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.cache import cache_control
-
+from orders.models import Order
 # Create your views here.
 
 
@@ -207,3 +207,15 @@ def product_delete(request, id):
 
 
 #PRODUCT MANAGEMENT DETAILS ENDS HERE------------>
+
+
+
+def order_list(request):
+    orders = Order.objects.all()
+    return render(request, 'adm/order_list.html', {'orders': orders})
+
+
+def order_actions(request, id):
+    order  = Order.objects.filter(id=id)
+    order.update(status='Cancelled')
+    return redirect('order_list')

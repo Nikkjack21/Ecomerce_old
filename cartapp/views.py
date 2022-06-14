@@ -28,16 +28,17 @@ def add_cart(request, product_id):
     cart.save()
 
     try:
-        cart_item   = CartItem.objects.get(product=product, cart=cart)
+        cart_item   = CartItem.objects.get(product=product, cart=cart, user=request.user)
         cart_item.quantity += 1   
         cart_item.save()
     except CartItem.DoesNotExist:
         cart_item   = CartItem.objects.create(
+            user   = request.user,
             product  = product,
             quantity  = 1,
             cart  = cart
         )
-    cart_item.save()
+        cart_item.save()
     return redirect('cart')
 
 
@@ -73,6 +74,7 @@ def remove_cart(request, product_id):
     cart     = Cart.objects.get(cart_id=_cart_id)
     product  = get_object_or_404(Product, id=product_id)
     cart_item = CartItem.objects.get(product=product, cart=cart)
+    
 
     if cart_item > 1:
         cart_item.quantity -= 1
@@ -100,7 +102,7 @@ def checkout(request, total=0, quantity=0, cart_items=None):
             quantity += cart_item.quantity
         tax = (2 * total)/100
         grand_total  = total + tax
-    except ObjectDoesNotExist:
+    except:
        pass
  
     context ={

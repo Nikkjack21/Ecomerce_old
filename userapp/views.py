@@ -1,15 +1,17 @@
 
 from email import message
+from multiprocessing import context
 import random
 from turtle import home
 from django.shortcuts import get_object_or_404, redirect, render
 from django.http import HttpResponse
 from django.contrib.auth import authenticate,login,logout
 from django.views.decorators.cache import cache_control
-from cartapp.models import CartItem
+from cartapp.models import CartItem, Cart
+from orders.models import Order
 from store.models import Product
 from category.models import Category
-from accounts.models import Account
+from accounts.models import Account, UserProfile
 from django.contrib import messages
 from django.contrib.auth.models import User
 from twilio.rest import Client
@@ -18,6 +20,7 @@ from django.contrib.auth.decorators import login_required
 from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator
 from cartapp.views import _cart_id
 from django.http import HttpResponse
+from accounts.forms import UserForm, UserProfileForm
 
 
 @cache_control(no_cache=True, must_revalidate=True, no_store=True)
@@ -47,6 +50,21 @@ def signin(request):
 
 
             if user is not None:
+                try:
+                    print('enter try block')
+                    cart  = Cart.objects.get(cart_id=_cart_id(request))
+                    is_cart_item_exists  = CartItem.objects.filter(cart=cart).exists()
+
+                    if is_cart_item_exists:
+                        cart_item=CartItem.objects.filter(cart=cart)
+                        print(cart_item)
+
+                        for item in cart_item:
+                            item.user = user
+                            item.save()
+                except:
+                    print('enter rxcpet block')
+                    pass
                 login(request, user)
                 messages.success(request, 'You have succesfully logged in', )
                 return redirect(index)
@@ -203,3 +221,96 @@ def p_details(request, category_slug, product_slug):
         'in_cart': in_cart
     }
     return render(request,'user/product_detail.html', context)
+
+
+def my_account(request):
+    if request.user.is_authenticated:
+        return render(request, 'user/myaccount.html')
+    else:
+        return redirect('signin')
+
+
+
+@login_required(login_url='/signin/')
+def changePassword(request):
+    if request.method == 'POST':
+        current_password    = request.POST['current_password']
+        new_password        = request.POST['new_password']
+        confirm_password    = request.POST['confirm_password']
+
+        user                = Account.objects.get(username__exact=request.user.username)
+        
+        if new_password == confirm_password:
+            success        = user.check_password(current_password)
+            if success:
+                user.set_password(new_password)
+                user.save()
+                messages.success(request, 'password updated successfully')
+                return redirect('change_password')
+            else:
+                messages.error(request, 'Please enter valid password')
+                return redirect('change_password')
+        else:
+            messages.error(request, 'Passwords donot match')
+            return redirect('change_password')
+    return render(request,'user/password.html')
+
+
+
+
+def editProfile(request):
+    if not request.user.is_authenticated:
+        return redirect(signin)
+    else:
+        userprofile     = get_object_or_404(UserProfile, user=request.user)
+        if request.method == "POST":
+            user_form           = UserForm(request.POST, instance=request.user)
+            profile_form        = UserProfileForm(request.POST, request.FILES, instance=userprofile)
+            if user_form.is_valid() and profile_form.is_valid():
+                user_form.save()
+                profile_form.save()
+                messages.success(request, "Succesfully Updated")
+                return redirect('edit_profile')
+        else:
+            user_form = UserForm(instance=request.user)
+            profile_form = UserProfileForm(instance=userprofile) 
+    context = {
+        'user_form': user_form,
+        'profile_form': profile_form
+    }
+    return render(request, 'user/editpro.html', context)
+
+
+def my_orders(request):
+    user = request.user
+    orders  = Order.objects.filter(user=user)
+    items = CartItem.objects.filter(user=user)
+    
+    # cart   = Cart.objects.get(cart_id=_cart_id(request))
+    # items   = CartItem.objects.filter(cart=cart, is_active=True,)
+    
+    print(user)
+    print('Show items below')
+    print(items)
+    context ={
+        'orders': orders,
+        'items': items
+    }
+    return render(request, 'user/myorders.html', context)
+
+
+
+
+
+
+
+
+
+
+
+# def my_orders(request):
+#     orders = Order.objects.filter(user=request.user, is_ordered=False)
+#     context={
+#         'orders': orders
+#     }
+#     return render(request, 'user/myorders.html', context)
