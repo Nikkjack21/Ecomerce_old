@@ -14,6 +14,9 @@ urlpatterns = [
     path('editpro/', views.editProfile, name='edit_profile'),
     path('change_password/', views.changePassword, name='change_password'),
     path('my_orders/', views.my_orders, name='my_orders'),
+    path('order_user_actions/<int:id>/', views.order_user_actions, name='order_user_actions'),
+    path('user_address/', views.user_address, name='user_address'),
+    path('add_address/', views.add_address, name='add_addresss'),
     path('<slug:category_slug>/', views.p_view, name='products_by_category'),
     path('<slug:category_slug>/<slug:product_slug>/', views.p_details, name='products_by_category'),
    

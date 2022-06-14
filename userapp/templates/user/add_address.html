@@ -1,0 +1,100 @@
+{% extends 'user/adr_base.html' %}
+
+{% block content %}
+
+
+
+
+
+
+
+
+
+<div class="row">
+    <div class="col-md-8 mx-auto">
+      <div class="card mb-4">
+        <div class="card-header py-3">
+          <h5 class="mb-0">Add address</h5>
+        </div>
+        <div class="card-body">
+          <form action="" method="POST">
+            {% csrf_token %}
+            <!-- 2 column grid layout with text inputs for the first and last names -->
+ 
+  
+            <!-- Email input -->
+            <div class="row mb-4">
+                <div class="col">
+                  <div class="form-outline">
+                    <label class="form-label">Address 1</label>
+                    <input type="text" name="address_line_1" class="form-control" />
+                    
+                  </div>
+                </div>
+                <div class="col">
+                  <div class="form-outline">
+                    <label class="form-label" >Address 2</label>
+                    <input type="text" name="address_line_2" class="form-control" />
+                    
+                  </div>
+                </div>
+              </div>
+  
+              <div class="row mb-4">
+                <div class="col-md-4">
+                  <div class="form-outline">
+                    <label class="form-label">City</label>
+                    <input type="text" name="city" class="form-control" />
+                    
+                  </div>
+                </div>
+                <div class="col-md-4">
+                  <div class="form-outline">
+                    <label class="form-label" >State</label>
+                    <input type="text" name="state" class="form-control" />
+                   
+                  </div>
+                </div>
+                <div class="col-md-4">
+                  <div class="form-outline">
+                    <label class="form-label" >Country</label>
+                    <input type="text" name="country" class="form-control" />
+                    
+                  </div>
+                </div>
+              </div>
+  
+            <!-- Checkbox -->
+            <div class="form-check d-flex justify-content-between mb-2">
+                <div>
+                   <button type="submit" class="btn btn-primary">Submit</button>
+                </div>
+                <div>
+                    <a href="" class="btn btn-success" >Go back</a>
+  
+                </div>
+               
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  
+
+  </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+{% endblock %}

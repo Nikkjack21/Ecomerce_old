@@ -111,7 +111,7 @@
                 <!-- BEGIN TOP BAR MENU -->
                 <div class="col-md-6 col-sm-6 additional-nav">
                     <ul class="list-unstyled list-inline pull-right">
-                      <li><a href="shop-account.html">My Account</a></li>
+                      <li><a href="{% url 'my_account' %}">My Account</a></li>
                       <li><a href="shop-wishlist.html">My Wishlist</a></li>
                       <li><a href="cart/">Checkout</a></li>
                       {% if user.is_authenticated %}
@@ -321,6 +321,7 @@
                 <th scope="col">Order total</th>
                 <th scope="col">Date</th>
                 <th scope="col">Status</th>
+                <th scope="col">Actions</th>
               </tr>
             </thead>
             <tbody>
@@ -334,6 +335,9 @@
                 <td>{{order.order_total}}</td>
                 <td>{{order.created_at}}</td>
                 <td>{{order.status}}</td>
+                <td>
+                  <a href="{% url 'order_user_actions' order.id%}"> <button class="btn btn-warning" onclick="return confirm ('Are you sure to cancel?')" >Cancel</button> </a>
+                </td>
               </tr>
             
                   

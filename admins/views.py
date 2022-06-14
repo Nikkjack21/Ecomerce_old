@@ -90,13 +90,15 @@ def cate_add(request):
     new = Category()
     if request.method == 'POST':
       
-        if len(new.category_name) == 0 :
-            messages.info(request, "Category fields cannot be blank")
-            return redirect('AddCategory')
+
         new.category_name       = request.POST.get('category_name')
         new.description         = request.POST.get('description')
         new.slug                = slugify(new.category_name)
 
+        if new.category_name =='' :
+            messages.info(request, "Category fields cannot be blank")
+            print('Filed blank')
+            return redirect('AddCategory')
         if len(request.FILES) != 0:
             new.cat_image       = request.FILES.get('image')   
         new.save()

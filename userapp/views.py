@@ -88,7 +88,7 @@ def otp(request):
         phone_number = request.POST['phone_number']
         if mobile == phone_number:
             account_sid     = 'AC29ac10e058d302306bbbd63a523a0f15'
-            auth_token      = '5957d8a798d02d9a9200e3c62e8bf89b'
+            auth_token      = '493bef2657652d28660c426702d59617'
 
             client      = Client(account_sid, auth_token)
             global otp
@@ -112,7 +112,7 @@ def otpcode(request):
     if request.user.is_authenticated:
         return redirect('index')
     if request.method == 'POST':
-        user      = Account.objects.get(phone_number = 8089758357)
+        user      = Account.objects.get(phone_number=8089758357)
         otpvalue  = request.POST.get('otp')
         if otpvalue == otp:
             print('VALUE IS EQUAL')
@@ -299,18 +299,44 @@ def my_orders(request):
     return render(request, 'user/myorders.html', context)
 
 
+def order_user_actions(request, id):
+    order  = Order.objects.filter(id=id)
+    order.update(status='Cancelled')
+    return redirect('my_orders')
 
 
 
 
+def user_address(request):
+    address = UserProfile.objects.filter(user=request.user)
+    context={
+        'address': address
+    }
+    return render(request, 'user/user_address.html', context)
+
+
+def add_address(request):
+    adrs  = UserProfile()
+    
+    if request.method=="POST":
+        # adrs.user               = request.user
+        # adrs.first_name         = request.POST.get('first_name')
+        # adrs.last_name          = request.POST.get('last_name')
+        # adrs.email              = request.POST.get('email')
+        # adrs.phone_number       = request.POST.get('phone_number')
+       
+        adrs.address_line_1     = request.POST.get('address_line_1')
+        adrs.address_line_2     = request.POST.get('address_line_2')
+        adrs.city               = request.POST.get('city')
+        adrs.state              = request.POST.get('state')
+        adrs.country            = request.POST.get('country')
+        adrs.save()
+        messages.success(request, "Address Added")
+        return redirect(add_address)
+    context={
+        'adrs':adrs
+    }
+    return render(request, 'user/add_address.html', context)
 
 
 
-
-
-# def my_orders(request):
-#     orders = Order.objects.filter(user=request.user, is_ordered=False)
-#     context={
-#         'orders': orders
-#     }
-#     return render(request, 'user/myorders.html', context)

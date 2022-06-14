@@ -533,7 +533,7 @@
                     </div>
                     <h3><a href="{{ product.get_url }}">{{product.product_name}}</a></h3>
                     <div class="pi-price">&#x20B9;{{product.price}}</div>
-                    <a href="javascript:;" class="btn btn-default add2cart">Add to cart</a>
+                    <a href="{% url 'add_cart' product.id %}" class="btn btn-default add2cart">Add to cart</a>
                   </div>
                 
               
