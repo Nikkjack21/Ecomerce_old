@@ -143,7 +143,7 @@
     <!-- BEGIN HEADER -->
     <div class="header" >
       <div class="container  ">
-        <a class="site-logo" href="/"><img src="static/assets/corporate/img/logos/resizeZhea-logos1.svg" alt="Zhea Fashion"></a>
+        <a class="site-logo" href="/"><img src="{% static 'assets/corporate/img/logos/resizeZhea-logos1.svg' %}" alt="Zhea Fashion"></a>
 
         <a href="javascript:void(0);" class="mobi-toggler"><i class="fa fa-bars"></i></a>
 
@@ -363,11 +363,11 @@
         <div class="container">
           <ul class="breadcrumb">
               <li><a href="index.html">Home</a></li>
-              <li><a href="">Store</a></li>
+              <li><a href="{%url 'user_address' %}">Addresses</a></li>
               <li class="active">My Account Page</li>
           </ul>
           <!-- BEGIN SIDEBAR & CONTENT -->
-          <div class="row margin-bottom-40">
+          <div class="row margin-bottom-40">  
             <!-- BEGIN SIDEBAR -->
    
             <!-- END SIDEBAR -->

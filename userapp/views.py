@@ -50,21 +50,6 @@ def signin(request):
 
 
             if user is not None:
-                try:
-                    print('enter try block')
-                    cart  = Cart.objects.get(cart_id=_cart_id(request))
-                    is_cart_item_exists  = CartItem.objects.filter(cart=cart).exists()
-
-                    if is_cart_item_exists:
-                        cart_item=CartItem.objects.filter(cart=cart)
-                        print(cart_item)
-
-                        for item in cart_item:
-                            item.user = user
-                            item.save()
-                except:
-                    print('enter rxcpet block')
-                    pass
                 login(request, user)
                 messages.success(request, 'You have succesfully logged in', )
                 return redirect(index)
@@ -174,9 +159,10 @@ def signup(request):
 
 @cache_control(no_cache=True, must_revalidate=True, no_store=True)
 def signout(request):
+
         logout(request)
+        print("GETTING LOGGED OUT") 
         messages.info(request, 'You have logged out')
-        print("GETTING LOGGED OUT")
         return redirect(index)
     
 
@@ -258,11 +244,15 @@ def changePassword(request):
 
 
 
-def editProfile(request):
+def editProfile(request, id=id):
     if not request.user.is_authenticated:
         return redirect(signin)
     else:
-        userprofile     = get_object_or_404(UserProfile, user=request.user)
+        # userprofile     = get_object_or_404(UserProfile,user=request.user)
+        userprofile     = UserProfile.objects.get(id=id)
+        # userprofile     = UserProfile.objects.filter(id=id, user=request.user).first()
+        
+       
         if request.method == "POST":
             user_form           = UserForm(request.POST, instance=request.user)
             profile_form        = UserProfileForm(request.POST, request.FILES, instance=userprofile)
@@ -270,13 +260,15 @@ def editProfile(request):
                 user_form.save()
                 profile_form.save()
                 messages.success(request, "Succesfully Updated")
-                return redirect('edit_profile')
+                return redirect('edit_profile', id)
         else:
             user_form = UserForm(instance=request.user)
             profile_form = UserProfileForm(instance=userprofile) 
+    adr = UserProfile.objects.get(id=id)
     context = {
         'user_form': user_form,
-        'profile_form': profile_form
+        'profile_form': profile_form,
+        'adr': adr,
     }
     return render(request, 'user/editpro.html', context)
 
@@ -286,8 +278,6 @@ def my_orders(request):
     orders  = Order.objects.filter(user=user)
     items = CartItem.objects.filter(user=user)
     
-    # cart   = Cart.objects.get(cart_id=_cart_id(request))
-    # items   = CartItem.objects.filter(cart=cart, is_active=True,)
     
     print(user)
     print('Show items below')
@@ -319,7 +309,7 @@ def add_address(request):
     adrs  = UserProfile()
     
     if request.method=="POST":
-        # adrs.user               = request.user
+        adrs.user               = request.user
         # adrs.first_name         = request.POST.get('first_name')
         # adrs.last_name          = request.POST.get('last_name')
         # adrs.email              = request.POST.get('email')

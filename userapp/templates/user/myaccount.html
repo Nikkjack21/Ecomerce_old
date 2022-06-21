@@ -351,8 +351,8 @@
         <div class="container">
           <ul class="breadcrumb">
               <li><a href="index.html">Home</a></li>
-              <li><a href="">Store</a></li>
-              <li class="active">My Account Page</li>
+              
+              <li class="active">My Account </li>
           </ul>
           <!-- BEGIN SIDEBAR & CONTENT -->
           <div class="row margin-bottom-40">
@@ -361,10 +361,9 @@
               <ul class="list-group margin-bottom-25 sidebar-menu">
 
                 <li class="list-group-item clearfix"><a href="javascript:;"><i class="fa fa-angle-right"></i> My account</a></li>
-                <li class="list-group-item clearfix"><a href="javascript:;"><i class="fa fa-angle-right"></i> Address book</a></li>
+                <li class="list-group-item clearfix"><a href="{%url 'user_address'%}"><i class="fa fa-angle-right"></i> Addresses</a></li>
                 <li class="list-group-item clearfix"><a href="javascript:;"><i class="fa fa-angle-right"></i> Wish list</a></li>
-                <li class="list-group-item clearfix"><a href="javascript:;"><i class="fa fa-angle-right"></i> Returns</a></li>
-                <li class="list-group-item clearfix"><a href="javascript:;"><i class="fa fa-angle-right"></i> Newsletter</a></li>
+    
               </ul>
             </div>
             <!-- END SIDEBAR -->
@@ -375,7 +374,7 @@
               <div class="content-page">
                 <h3>My Account</h3>
                 <ul>
-                  <li><a href="{% url 'edit_profile' %}">Edit your account information</a></li>
+                  <li><a href="{% url 'edit_profile' user.id %}">Edit your account information</a></li>
                   <li><a href="{% url 'change_password' %}">Change your password</a></li>
                   <li><a href="javascript:;">Modify your address book entries</a></li>
                   <li><a href="javascript:;">Modify your wish list</a></li>

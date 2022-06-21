@@ -362,9 +362,9 @@
     <div class="main">
         <div class="container">
           <ul class="breadcrumb">
-              <li><a href="index.html">Home</a></li>
-              <li><a href="">Store</a></li>
-              <li class="active">My Account Page</li>
+              <li><a href="{%url 'index' %}">Home</a></li>
+              <li><a href="{%url 'my_account' %}">My account</a></li>
+              <li class="active">Address</li>
           </ul>
           <!-- BEGIN SIDEBAR & CONTENT -->
           <div class="row margin-bottom-40">
@@ -391,7 +391,8 @@
                   <p class="card-text">{{adr.city}}, {{adr.state}}</p>
                   <p class="card-text">{{adr.country}}</p>
 
-                  <a href="#" class="btn btn-success">Edit </a>
+                  <a href="{% url 'edit_profile' adr.id %}" class="btn btn-success">Edit </a>
+                  
                 </div>
               </div>
                 {% endfor %}

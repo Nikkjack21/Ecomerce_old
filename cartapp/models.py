@@ -1,6 +1,10 @@
+from unicodedata import category
 from django.db import models
 from accounts.models import Account
 from store.models import Product
+from category.models import Category
+from store.models import Product
+from django.core.validators import MinValueValidator, MaxValueValidator
 
 
 class Cart(models.Model):
@@ -25,5 +29,34 @@ class CartItem(models.Model):
     def sub_total(self):
         return self.product.price * self.quantity
 
+
+
+
+class CategoryOffer(models.Model):
+    category            = models.OneToOneField(Category, related_name='cat_offer', on_delete=models.CASCADE)
+    valid_from          = models.DateTimeField()
+    valid_to            = models.DateTimeField()
+    discount            = models.IntegerField(validators=[MinValueValidator(0), MaxValueValidator(100)])
+    active              = models.BooleanField()
+
+    def __str__(self):
+     return self.category.category_name
+
+    def discount_amount(self,sub_total):
+        return self.discount/100*sub_total
+
+
+class ProductOffer(models.Model):
+    product             = models.OneToOneField(Product,related_name='pro_offer',on_delete=models.CASCADE)
+    valid_from          = models.DateTimeField()
+    valid_to            = models.DateTimeField()
+    discount            = models.IntegerField(validators=[MinValueValidator(0),MaxValueValidator(100)])
+    active              = models.BooleanField()
+
+    def __str__(self):
+        return self.product.product_name
+
+    def discount_amount(self,sub_total):
+        return self.discount/100*sub_total
 
     

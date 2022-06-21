@@ -46,6 +46,7 @@ INSTALLED_APPS = [
     'django_twilio',
     'cartapp',
     'orders',
+    'crispy_forms',
     
 ]
 
@@ -82,6 +83,10 @@ TEMPLATES = [
 WSGI_APPLICATION = 'projectseven.wsgi.application'
 
 AUTH_USER_MODEL = 'accounts.Account'
+
+CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap4"
+
+CRISPY_TEMPLATE_PACK = "bootstrap4"
 
 
 # Database
@@ -156,3 +161,7 @@ MEDIA_ROOT = BASE_DIR /'media'
 # https://docs.djangoproject.com/en/4.0/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+
+RAZORPAY_KEY_ID = "rzp_test_jZKCHvKdz0LDRB"
+RAZORPAY_KEY_SECRET = "5X5gp22MmsMegP3810rkuJBE"

@@ -380,7 +380,7 @@
 
          
 
-                <form  action="{% url 'edit_profile' %}" class="form-horizontal " method="POST">
+                <form  action="{% url 'edit_profile' adr.id %}" class="form-horizontal " method="POST">
                     {% csrf_token %}
                     
                   <div class="form-group">

@@ -328,10 +328,9 @@
            
               <tr>
                 {% for order in orders  %}
-                {% for item in items%}
+              
                 <th scope="row">{{order.order_number}}</th>
                 <td>{{order.first_name}}</td>
-                <td>{{item.product}}</td>
                 <td>{{order.order_total}}</td>
                 <td>{{order.created_at}}</td>
                 <td>{{order.status}}</td>
@@ -341,7 +340,7 @@
               </tr>
             
                   
-              {% endfor %}
+           
               {% endfor %}
               
             

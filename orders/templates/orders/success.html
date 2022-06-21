@@ -2,58 +2,121 @@
 
 {% block content %}
 
-<html>
-  <head>
-    <link href="https://fonts.googleapis.com/css?family=Nunito+Sans:400,400i,700,900&display=swap" rel="stylesheet">
-  </head>
-    <style>
-      body {
-        text-align: center;
-        padding: 40px 0;
-        background: #EBF0F5;
-      }
-        h1 {
-          color: #88B04B;
-          font-family: "Nunito Sans", "Helvetica Neue", sans-serif;
-          font-weight: 900;
-          font-size: 40px;
-          margin-bottom: 10px;
-        }
-        .pp {
-          color: #404F5E;
-          font-family: "Nunito Sans", "Helvetica Neue", sans-serif;
-          font-size:20px;
-          margin: 0;
-        }
-      i {
-        color: #9ABC66;
-        font-size: 100px;
-        line-height: 200px;
-        margin-left:-15px;
-      }
-      .card {
-        background: white;
-        padding: 60px;
-        border-radius: 4px;
-        box-shadow: 0 2px 3px #C8D0D8;
-        display: inline-block;
-        margin: 0 auto;
-        margin-bottom: 5rem;
-      }
-    </style>
-    <body>
-      <div class="card">
-      <div style="border-radius:200px; height:200px; width:200px; background: #F8FAF5; margin:0 auto;">
-        <i class="checkmark">✓</i>
+
+
+      <div class="container" style="margin-top: 20px;">
+        <center><i class="fa fa-check-circle" style="font-size: 72px;margin-bottom: 20px;color: #28A745;"></i></center>
+        <h2 class="text-center">Payment Successful</h2>
+      <br>
+      <div class="text-center">
+        <a href="{% url 'index' %}" class="btn btn-success">Shop more</a>
       </div>
-        <h1>Success</h1> 
-        <p class="pp">Your order has been succesfully placed.<br/> 
-         Thank you for shopping with us.</p> <br>
-         <a href="{% url 'index' %}" class="btn btn-success">Continue shopping</a>
-      </div>
-    </body>
-</html>
+    </div>
+    
+    <div class="container" style="margin: 0 auto;width: 50%;padding: 50px;background: #f1f1f1;margin-top: 50px;margin-bottom: 50px;">
+        <div class="row invoice row-printable">
+            <div class="col-md-12">
+                <!-- col-lg-12 start here -->
+                <div class="panel panel-default plain" id="dash_0">
+                    <!-- Start .panel -->
+                    <div class="panel-body p30">
+                        <div class="row">
+                            <!-- Start .row -->
+                            <div class="col-lg-6">
+                                <!-- col-lg-6 start here -->
+                                <div class="invoice-logo"><img src="/images/logo.png" alt="Invoice logo" style="max-height: 40px;"></div>
+                            </div>
+                            <!-- col-lg-6 end here -->
+                            <div class="col-lg-6">
+                                <!-- col-lg-6 start here -->
+                                <div class="invoice-from">
+                                    <ul class="list-unstyled text-right">
+                                        <li><strong>Invoiced To</strong></li>
+                                        <li>{{order.first_name}} {{order.last_name}}</li>
+                                        <li>{{order.phone}}</li>
+                                        <li>{{order.address_line_1}}</li>
+                                        <li>{{order.address_line_2}}</li>
+                                        <li>{{order.city}}, {{order.state}}</li>
+                                        <li>{{order.country}}</li>
+                                    </ul>
+                                </div>
+                            </div>
+                            <!-- col-lg-6 end here -->
+                            <div class="col-lg-12">
+                                <!-- col-lg-12 start here -->
+                                <div class="invoice-details mt25">
+                                    <div class="well">
+                                        <ul class="list-unstyled mb0">
+                                            <li><strong>Order</strong> - {{ order_number }}</li>
+                                            <li><strong>Transaction</strong> - {{ transID }}</li>
+                                            <li><strong>Order Date:</strong> {{order.created_at}}</li>
+                                            <li><strong>Status:</strong> {{payment.status}}</li>
+                                        </ul>
+                                    </div>
+                                </div>
+                               
+                                <div class="invoice-items">
+                                    <div class="table-responsive" style="overflow: hidden; outline: none;" tabindex="0">
+                                        <table class="table table-bordered">
+                                            <thead>
+                                                <tr>
+                                                    <th class="per70 text-center">Description</th>
+                                                    <th class="per5 text-center">Qty</th>
+                                                    <th class="per25 text-center">Total</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr>
+                                                    <td>1024MB Cloud 2.0 Server - elisium.dynamic.com (12/04/2014 - 01/03/2015)</td>
+                                                    <td class="text-center">1</td>
+                                                    <td class="text-center">$25.00 USD</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>Logo design</td>
+                                                    <td class="text-center">1</td>
+                                                    <td class="text-center">$200.00 USD</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>Backup - 1024MB Cloud 2.0 Server - elisium.dynamic.com</td>
+                                                    <td class="text-center">12</td>
+                                                    <td class="text-center">$12.00 USD</td>
+                                                </tr>
+                                            </tbody>
+                                            <tfoot>
+                                                <tr>
+                                                    <th colspan="2" class="text-right">Sub Total:</th>
+                                                    <th class="text-center">$237.00 USD</th>
+                                                </tr>
+                                                <tr>
+                                                    <th colspan="2" class="text-right">Tax:</th>
+                                                    <th class="text-center">$47.40 USD</th>
+                                                </tr>
+                                                
+                                                <tr>
+                                                    <th colspan="2" class="text-right">Grand Total:</th>
+                                                    <th class="text-center">$284.4.40 USD</th>
+                                                </tr>
+                                            </tfoot>
+                                        </table>
+                                    </div>
+                                </div>
+                                <div class="invoice-footer mt25">
+                                    <p class="text-center">Thank you for shopping with us!</p>
+                                </div>
+                            </div>
+                            <!-- col-lg-12 end here -->
+                        </div>
+                        <!-- End .row -->
+                    </div>
+                </div>
+                <!-- End .panel -->
+            </div>
+            <!-- col-lg-12 end here -->
+        </div>
+        </div>
+    
 
 
 
 {% endblock %}
+

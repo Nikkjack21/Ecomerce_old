@@ -13,6 +13,80 @@
       <!-- BEGIN SIDEBAR & CONTENT -->
       <div class="row margin-bottom-40">
         <!-- BEGIN CONTENT -->
+
+<!-----SLECT ADDRESS-------->
+
+ <style>
+          
+.cool {
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+
+/**
+  Component
+**/
+
+.hot {
+    width: 100%;
+}
+
+.card-input-element {
+    display: none;
+}
+
+.card-input {
+    margin: 10px;
+    padding: 0px;
+}
+
+.card-input:hover {
+    cursor: pointer;
+}
+
+.card-input-element:checked + .card-input {
+     box-shadow: 0 0 1px 1px #2ecc71;
+}
+
+
+        </style>
+
+      <form action="{% url 'place_order' %}" method="POST">
+          {% csrf_token %}
+        <div class="cool">
+  
+          <h1>Select address</h1>
+          
+          <div class="row">
+            
+              <div class="col-md-4 col-lg-4 col-sm-4">
+                {% for adr in profile %}
+                <label class="hot">
+                 
+                  <input type="radio" name="selection" value="{{adr.id}}" selected checked class="card-input-element" />
+        
+                    <div class="card card-default card-input">
+                      <div class="card-header">Product A</div>
+                      <div class="card-body">
+                        <p> {{adr.address_line_1}}</p>
+                        <p> {{adr.address_line_1}}</p>
+                        <p> Product specific content</p>
+                      </div>
+                    </div>
+                   
+                </label>
+                {% endfor %}
+              </div>
+          </div>
+          
+        </div>
+
+
+
+<!-----END ---SLECT ADDRESS-------->
+
+
         <div class="col-md-12 col-sm-12">
           <h1>Checkout</h1>
           
@@ -24,22 +98,21 @@
             <div id="shipping-address" class="panel panel-default">
               <div class="panel-heading">
                 <h2 class="panel-title">
-                
+                <input type="radio" name="selection" value="typeadr" id="">
                   <label for="">Delivery Details</label>
                   </a>
                 </h2>
               </div>
               <div id="shipping-address-content" class="panel-collapse ">
                 <div class="panel-body row">
-                  <form action="{% url 'place_order' %}" method="POST">
-                    {% csrf_token %}
+
 
 
                   <div class="col-md-6 col-sm-6">
                     
                     <div class="form-group">
                       <label >First Name <span class="require">*</span></label>
-                      <input type="text"  name="first_name" required class="form-control">
+                      <input type="text"  name="first_name"  class="form-control">
                     </div>
                     <div class="form-group">
                       <label >Last Name <span class="require">*</span></label>

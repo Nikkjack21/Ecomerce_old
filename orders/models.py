@@ -9,6 +9,11 @@ from store.models import Product
 
 # Create your models here.
 class Payment(models.Model):
+    STATUS =(
+        ('Pending','Pending'),
+        ('Completed','Completed'),
+        ('Cancelled','Cancelled'),
+    )
     user            = models.ForeignKey(Account, on_delete=models.CASCADE)
     payment_id      = models.CharField(max_length=100)
     payment_method  = models.CharField(max_length=50)
@@ -65,3 +70,12 @@ class OrderProduct(models.Model):
 
     def __str__(self):
         return self.product.product_name
+
+
+
+class RazorPay(models.Model):
+    order           = models.ForeignKey(Order, on_delete=models.CASCADE)
+    razor_pay       = models.CharField(max_length=200)
+
+    def __str__(self):
+        return self.order.order_number

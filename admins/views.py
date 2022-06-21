@@ -1,3 +1,4 @@
+import datetime
 from email.mime import image
 from multiprocessing import context
 import os
@@ -13,6 +14,12 @@ from slugify import slugify
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.cache import cache_control
 from orders.models import Order
+from cartapp.models import ProductOffer
+from .forms import ProductOfferForm
+from django.db.models import Sum,Count
+from decimal import Decimal
+from django.utils.text import Truncator
+from django.db.models.functions import TruncDate, TruncDay, TruncMonth, TruncWeek
 # Create your views here.
 
 
@@ -221,3 +228,140 @@ def order_actions(request, id):
     order  = Order.objects.filter(id=id)
     order.update(status='Cancelled')
     return redirect('order_list')
+
+
+
+def offer_product(request):
+    off_pro  = ProductOffer.objects.all()
+
+    context = {
+        'off_pro': off_pro,
+    }
+    return render(request, 'adm/product_offer.html', context)
+
+
+def add_offer_pro(request):
+    form = ProductOfferForm(request.POST)
+    print("hello pro offer    OFFER IS ACTUALL WORKING")
+    if form.is_valid():
+        form.save()
+        messages.info(request,'Product offer added successfully')
+        return redirect(offer_product)
+    context ={
+        'form':form
+    }
+    return render(request, 'adm/add_product_offer.html', context)
+
+
+def edit_pro_offer(request,id):
+    offer = ProductOffer.objects.get(id=id)
+    form = ProductOfferForm(instance=offer)
+    if request.method =="POST":
+        form = ProductOfferForm(request.POST,instance=offer)
+        form.save()
+        messages.success(request,'Product offer updated successfully')
+        return redirect(offer_product)
+    return render (request,'adm/edit_product_offer.html',{'form':form,'offer':offer})
+
+
+def delete_pro_offer(request, id):
+    offer = ProductOffer.objects.get(id=id)
+    offer.delete()
+    return redirect(offer_product)
+
+
+
+
+
+def sales_report(request):
+    salesreport = Order.objects.all().order_by('-created_at')
+    total = 0
+    total= salesreport.aggregate(Sum('order_total')).get('order_total__sum')
+    RoundTotal =("{:0.2f}".format(total))
+    
+    context = {
+        'salesreport': salesreport ,
+        'total':    total,
+        'RoundTotal': RoundTotal,
+
+    }
+    return render(request,'adm/sales_report.html',context)
+
+
+
+
+def monthly_report(request,date):
+    context = None
+    frmdate = date
+   
+    fm = [ 2022 , frmdate , 1 ]
+    todt = [2022 , frmdate , 28 ]
+    
+    print(fm)
+            
+    salesreport = Order.objects.filter(created_at__gte=datetime.date(fm[0],fm[1],fm[2]), created_at__lte=datetime.date(todt[0],todt[1],todt[2])).annotate(day=TruncDate('created_at')).values('day').annotate(count=Count('id')).annotate(sum=Sum('order_total')).order_by('-day')
+    
+    if len(salesreport) > 0 :   
+        context = {
+                'salesreport' : salesreport ,  
+               
+            }
+        print(salesreport)
+        print("111")
+        return render(request,'adm/search_report_sales.html',context)
+        return render(request,'admin/sales_report_search.html',context)
+    else:
+        messages.info(request,"No Orders")
+    return render(request,'adm/sales_report.html',context)
+
+
+
+
+
+
+def yearly_report(request,date):
+    context = None
+    frmdate = date
+   
+    fm = [ frmdate , 1 , 1 ]
+    todt = [frmdate , 12 , 30 ]
+    
+    print(fm)
+            
+    salesreport = Order.objects.filter(created_at__gte=datetime.date(fm[0],fm[1],fm[2]), created_at__lte=datetime.date(todt[0],todt[1],todt[2])).annotate(day=TruncDate('created_at')).values('day').annotate(count=Count('id')).annotate(sum=Sum('order_total')).order_by('-day')
+    if len(salesreport) > 0 :   
+        context = {
+                'salesreport' : salesreport ,   
+            }
+        print(salesreport)
+        print("222222222222222222222222222222222222222")
+        return render(request,'adm/search_report_sales.html',context)
+    else:
+        print("44444444444444444")
+        messages.info(request,"No Orders")
+    return render(request,'adm/sales_report.html',context)
+
+
+
+def weekly_report(request,date):
+    context = None
+    frmdate = date
+   
+    fm = [ 2022 , 1 , frmdate ]
+    todt = [2022 , 12 , frmdate ]
+    
+    print(fm)
+            
+    salesreport = Order.objects.filter(created_at__gte=datetime.date(fm[0],fm[1],fm[2]), created_at__lte=datetime.date(todt[0],todt[1],todt[2])).annotate(day=TruncWeek ('created_at')).values('weekly').annotate(count=Count('id')).annotate(sum=Sum('order_total')).order_by('-weekly')
+    if len(salesreport) > 0 :   
+        context = {
+                'salesreport' : salesreport ,   
+            }
+        print(salesreport)
+        print("222222222222222222222222222222222222222")
+        return render(request,'adm/search_report_sales.html',context)
+    else:
+        print("44444444444444444")
+        messages.info(request,"No Orders")
+    return render(request,'adm/sales_report.html',context)
+
