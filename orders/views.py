@@ -58,8 +58,8 @@ def place_order(request, total=0, quantity=0):
     
  
     
-
-
+    global order_data
+    global grand_total
     grand_total=0
     tax=0
   
@@ -200,28 +200,12 @@ def order_complete(request):
 
 
 def razor_pay(request):
-        cart   = Cart.objects.get(cart_id=_cart_id(request))
-        cart_itemss   = CartItem.objects.filter(cart=cart, is_active=True,)
-        
-    
-        
-
-
-        grand_total=0
-        tax=0
-    
-        for cart_item in cart_itemss:
-            total += (cart_item.product.price * cart_item.quantity)
-            quantity += cart_item.quantity
-        tax = (2 * total)/100 
-        grand_total =  total +tax
-
-        
         razorpay_client = razorpay.Client(
         auth=(settings.RAZOR_KEY_ID, settings.RAZOR_KEY_SECRET))
 
         currency = 'INR'
         amount = grand_total
+        print(grand_total)
 
         #create order
         razorpay_order = razorpay_client.order.create(  {"amount": int(amount) * 100, "currency": "INR", "payment_capture": "1"})
@@ -231,77 +215,149 @@ def razor_pay(request):
         callback_url = 'http://127.0.0.1:8000/orders/razor_success/'   
     
         # we need to pass these details to frontend.
-        cart_item    = CartItem.objects.filter(user=request.user)
-        
-        order_data      = Order.objects.get(user=request.user, is_ordered=False, order_number=order_number)
         context = {
         'razorpay_order_id' : razorpay_order_id,
         'razorpay_merchant_key' : settings.RAZOR_KEY_ID,
         'razorpay_amount' : amount,
         'currency' : currency ,
         'callback_url' : callback_url,
-        
-        'order_data':order_data,
-        
-        'cart_item':cart_item,
+
 
         }
-        razor_model = RazorPay()
+        razor_model =RazorPay()
         razor_model.order = order_data
+        print(order_data)
         razor_model.razor_pay = razorpay_order_id
         razor_model.save()
-        pass
+        print('razor Success')
+        transID = request.POST.get('razorpay_payment_id')
+        razorpay_order_id = request.POST.get('razorpay_order_id')
+        signature = request.POST.get('razorpay_signature')
+        current_user = request.user
+                #transaction details store
+        razor = RazorPay.objects.get(razor_pay=razorpay_order_id)
+        order = Order.objects.get(order_number = razor)
+        print('razor success page')
+        payment = Payment()
+        payment.user= request.user
+        payment.payment_id = transID
+        payment.payment_method = "Razorpapy"
+        payment.amount_paid = order.order_total
+        payment.status = "Completed"
+        payment.save()
+
+        order.payment=payment
+        order.save()
 
 
 
-
-
-
-
-
-
-
-# def cash_on_delivery(request):
-#     user = request.user
-#     order_id = request.session.get('order_id')
-#     print(order_id)
- 
-#     order = Order.objects.get(order_number = order_id)
-#     cart_items = CartItem.objects.filter(user=user)
         
-#     payment = Payment()
-#     payment.user = user
-#     payment.payment_id = order_id
-#     payment.payment_method = 'COD'
-#     payment.amount_paid=order.order_total
-#     print("111111111")
- 
-#     payment.status = 'Pending'
-#     payment.save()
-#     order.payment=payment
-#     order.is_ordered =True
-#     order.save()
-
-#     return render(request,'orders/success.html', {'order':order, 'cart_items': cart_items})
-
-
-# def cash_on_delivery(request,order_number):
-#     current_user = request.user
-#     order= Order.objects.get(order_number=order_number)
-#     print(order)
-
-#     #transaction details store
-#     payment = Payment()
-#     payment.user= current_user
-#     payment.payment_id = ''
-#     payment.payment_method = 'Cash on delivery'
-#     payment.amount_paid = ''
-#     payment.status = 'Pending'
-#     payment.save()
-#     print(payment.payment_method)
+        cart_item = CartItem.objects.filter(user=current_user)
+        for item in cart_item:
+       
+            OrderProduct.objects.create(
+            order = order,
+            product = item.product,
+            user = current_user,
+            quantity = item.quantity,
+            product_price = item.product.price,
+            payment = payment,
+            ordered = True,
+            )
     
-#     order.payment=payment
-#     order.save()
-    # CartItem.objects.filter(user=request.user).delete()
+        #decrease the product quantity from product
+        orderproduct = Product.objects.filter(id=item.product_id).first()
+        orderproduct.stock = orderproduct.stock-item.quantity
+        orderproduct.save()
+        #delete cart item from usercart after ordered
+        CartItem.objects.filter(user=current_user).delete()
 
-#     return render(request,'orders/success.html', {'order':order})
+        order = Order.objects.get(order_number = razor )
+        order_product = OrderProduct.objects.filter(order=order)
+        transID = OrderProduct.objects.filter(order=order).first()
+        context = {
+            'order':order,
+            'order_product':order_product,
+            'transID':transID
+        }
+        return render(request,'orders/success.html', context)
+
+
+
+
+
+
+
+
+
+
+
+
+
+def cash_on_delivery(request,order_number):
+    total =0
+    quantity =0
+    cart   = Cart.objects.get(cart_id=_cart_id(request))
+    cart_itemss   = CartItem.objects.filter(cart=cart, is_active=True,)
+    
+    for cart_item in cart_itemss:
+        new_price = offer_check_function(cart_item)
+        total += (new_price * cart_item.quantity)
+        # total += (cart_item.product.price * cart_item.quantity)
+        quantity += cart_item.quantity
+
+    current_user = request.user
+    order= Order.objects.get(order_number=order_number)
+    print(order)
+
+    #transaction details store
+    payment = Payment()
+    payment.user= current_user
+    payment.payment_id = ''
+    payment.payment_method = 'Cash on delivery'
+    payment.amount_paid = ''
+    payment.status = 'Pending'
+    payment.save()
+    print(payment.payment_method)
+    
+    order.payment=payment
+    order.save()
+
+    cart_item = CartItem.objects.filter(user=current_user)
+    
+    
+    #taking order_id to show the invoice
+
+    
+   
+    for item in cart_item:
+       
+        OrderProduct.objects.create(
+        order = order,
+        product = item.product,
+        user = current_user,
+        quantity = item.quantity,
+        product_price = item.product.price,
+        payment = payment,
+        ordered = True,
+        )
+
+
+    #decrease the product quantity from product
+    orderproduct = Product.objects.filter(id=item.product_id).first()
+    orderproduct.stock = orderproduct.stock-item.quantity
+    orderproduct.save()
+    CartItem.objects.filter(user=request.user).delete()
+
+    order = Order.objects.get(order_number = order_number )
+    order_product = OrderProduct.objects.filter(order=order)
+    transID = OrderProduct.objects.filter(order=order).first()
+    context = {
+        'order':order,
+        'order_product':order_product,
+        'transID':transID,
+        'cart_itemss': cart_itemss,
+        'total': total,
+    }
+
+    return render(request,'orders/cod_success.html', context)
