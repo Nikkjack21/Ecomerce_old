@@ -58,10 +58,11 @@
   
           <h1>Select address</h1>
           
-          <div class="row">
+          <div class="grid-container" >
             
-              <div class="col-md-4 col-lg-4 col-sm-4">
+              <div class="col-md-4 ">
                 {% for adr in profile %}
+               
                 <label class="hot">
                  
                   <input type="radio" name="selection" value="{{adr.id}}" selected checked class="card-input-element" />
@@ -76,12 +77,42 @@
                     </div>
                    
                 </label>
+               
                 {% endfor %}
               </div>
           </div>
           
         </div>
 
+
+
+      {% comment %} <div class="grid-container" >
+          <div class="card w-75 " >
+              <div class="card-body ">
+                <h5 class="card-title">ADD ADDRESS</h5>
+                <p class="card-text">Click below to add new adress</p>
+                <a href="{%url 'add_addresss' %}" class="btn btn-warning">Add Address</a>
+              </div>
+            </div>
+            {% for adr in profile %}
+            <input type="radio" name="selection" value="{{adr.id}}" selected checked class="card-input-element" />
+          <div class="card w-75">
+              <div class="card-body card-input">
+                <h5 class="card-title">{{user.first_name}} {{user.last_name}}</h5>
+                <h6 class="card-title">{{user.phone_number}} </h6>
+                <p class="card-text">{{adr.address_line_1}}</p>
+                <p class="card-text">{{adr.address_line_2}}</p>
+                <p class="card-text">{{adr.city}}, {{adr.state}}</p>
+                <p class="card-text">{{adr.country}}</p>
+
+                <a href="{% url 'edit_profile' adr.id %}" class="btn btn-success">Edit </a>
+                
+              </div>
+            </div>
+              {% endfor %}
+ 
+      </div>
+     {% endcomment %}
 
 
 <!-----END ---SLECT ADDRESS-------->
@@ -98,6 +129,8 @@
             <div id="shipping-address" class="panel panel-default">
               <div class="panel-heading">
                 <h2 class="panel-title">
+                  <a data-toggle="collapse" data-parent="#checkout-page" href="#shipping-address-content" class="accordion-toggle collapsed" aria-expanded="true">
+                  
                 <input type="radio" name="selection" value="typeadr" id="">
                   <label for="">Delivery Details</label>
                   </a>

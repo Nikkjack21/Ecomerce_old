@@ -4,6 +4,21 @@
 {% block content %}
 {% load static%}
 
+<style>
+    .image_preview{
+        width: 100px;
+        min-height: 100px;
+        border: 2px solid #dddddd;
+        margin-top: 15px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: bold;
+        color:#cccccc
+
+    }
+</style>
+
         <!-- Sidebar Start -->
         <div class="sidebar pe-4 pb-3">
             <nav class="navbar bg-light navbar-light">
@@ -96,9 +111,24 @@
                                
                             </div>
                             <div class="mb-3 pt-3" style="display: flex; justify-content: left;">
-                                <input type="file"  name="image" >
-                                 <br>
+                                <input type="file" multiple  name="image"  id="imageInp">
                             </div>
+                            
+                            <div class="d-flex justify-content-left" style="display: flex;">
+                            
+
+                            
+                            <div  class="image-preview  mx-2" id="imagePreview"  > 
+                                    <img  src="" alt="Image Preview" class="image_preview"> 
+                                    <span class="image-preview__default-text"></span>
+                                 </div>
+                            <div  class="image-preview  mx-2" id="imagePreview"  > 
+                                    <img  src="" alt="Image Preview" class="image_preview"> 
+                                    <span class="image-preview__default-text"></span>
+                                 </div>
+                                
+                            </div>
+
                             <button class="btn btn-primary my-4" type="submit">Submit</button>
                             </form>
                         </div>
@@ -110,6 +140,63 @@
 
             </div>
      </div>
+
+
+
+
+
+
+     <script>
+        const imageInp =document.getElementById("imageInp");
+        const previewContainer = document.getElementById("imagePreview");
+        const previewImage  = previewContainer.querySelector(".image_preview");
+        const previewDefaulttext  = previewContainer.querySelector(".image-preview__default-text");
+    
+        imageInp.addEventListener("change", function(){
+            const file = this.files[0];
+            
+            if (file){
+                const reader  = new FileReader();
+    
+                previewDefaulttext.style.display = "none";
+                previewImage.style.display      = "block";
+    
+                reader.addEventListener("load", function(){
+                    console.log(this)
+                    previewImage.setAttribute("src", this.result);
+                });
+    
+                reader.readAsDataURL(file);
+            }   else{
+                previewDefaulttext.style.display = "null";
+                previewImage.style.display      = "null";
+            }
+        });
+    
+    </script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

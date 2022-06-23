@@ -5,6 +5,7 @@ urlpatterns = [
     path('payments/', views.payment, name='payments'),
     path('cod/<str:order_number>/',views.cash_on_delivery,name='cash_on_delivery'),
     path('success/', views.order_complete, name='success'),
+    path('razor_success/', views.razor_success, name='razor_success')
     
 
 ]

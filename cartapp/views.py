@@ -152,3 +152,6 @@ def checkout(request, total=0, quantity=0, cart_items=None):
 
 
     
+
+def sample(request):
+    return render(request, 'check/check_out_test.html')

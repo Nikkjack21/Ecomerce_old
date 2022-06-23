@@ -140,16 +140,19 @@ def signup(request):
                 if Account.objects.filter(username=username).exists():
                     messages.info(request, "Username already taken")
                     return redirect(signup)
-                if Account.objects.filter(email=email).exists():
+                elif Account.objects.filter(email=email).exists():
                     messages.info(request, "Email already taken")   
                     return redirect(signup)
 
                 else:
                     myuser = Account.objects.create_user(first_name, last_name, username, email, password)
                     myuser.phone_number = phone_number
+                    myuser.save()
+
                     print('user created')
                     messages.success(request, "You have successfully created account ")
                     return redirect(signin)
+                
         else:
             messages.error(request,"Passwords donot match")
             return redirect(signup)
@@ -275,7 +278,7 @@ def editProfile(request, id=id):
 
 def my_orders(request):
     user = request.user
-    orders  = Order.objects.filter(user=user)
+    orders  = Order.objects.filter(user=user).order_by('-id')
     items = CartItem.objects.filter(user=user)
     
     
@@ -330,3 +333,9 @@ def add_address(request):
 
 
 
+
+
+
+
+def verify_num(request):
+    return render(request, 'reg/verification.html')

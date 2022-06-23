@@ -334,9 +334,21 @@
                 <td>{{order.order_total}}</td>
                 <td>{{order.created_at}}</td>
                 <td>{{order.status}}</td>
+                {% if not order.status == 'Cancelled'%}
                 <td>
+                  
                   <a href="{% url 'order_user_actions' order.id%}"> <button class="btn btn-warning" onclick="return confirm ('Are you sure to cancel?')" >Cancel</button> </a>
                 </td>
+
+                {% else %}
+
+                <td>
+                  
+                  <button class="btn btn-warning " disabled >Cancel</button> 
+                </td>
+
+
+                  {% endif %}
               </tr>
             
                   

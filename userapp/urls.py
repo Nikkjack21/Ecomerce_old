@@ -19,6 +19,7 @@ urlpatterns = [
     path('add_address/', views.add_address, name='add_addresss'),
     path('<slug:category_slug>/', views.p_view, name='products_by_category'),
     path('<slug:category_slug>/<slug:product_slug>/', views.p_details, name='products_by_category'),
+    path('verify_num/', views.verify_num, name='verify_num'),
    
     
 ]

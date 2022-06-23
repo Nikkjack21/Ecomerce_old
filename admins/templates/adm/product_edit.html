@@ -125,16 +125,31 @@
                         <div class="mb-3 pt-3" style="display: flex; justify-content: left;">
 
                             {% if product.images %}
-                            <img src="{{product.images.url}}" height="70ch" alt="Image here">
+                            <img class="mx-3" src="{{product.images.url}}" height="70ch" alt="Image here">
+                            {% if product.images_two and product.images_three %}
+                            <img class="mx-3" src="{{product.images_two.url}}" height="70ch" alt="Image here">
+                            <img class="mx-3" src="{{product.images_three.url}}" height="70ch" alt="Image here">
+                            {% endif %}
                             {% endif %}
                         </div>
+                        <!-----------------------IMAGESSS SELECTOR---------------------------------------->
+                        <div class="d-flex justify-content-left " style="display: flex;">
 
-                            <div class="mb-3 pt-3" style="display: flex; justify-content: left;">
+                            <div class="mb-3 mx-2 pt-3" style="display: flex; justify-content: left;">
+                                <input type="file" class="form-control "  name="image"  id="imageInp">
                                 
-                                <input type="file"  name="image" >
-                                 <br>
-                                 
+                            
                             </div>
+                            <div class="mb-3 pt-3 mx-2" style="display: flex; justify-content: left; ">
+                                <input type="file" class="form-control" style="position: static;"  name="image2"  id="imageInp2">
+                            </div>
+                            
+                            <div class="mb-3 pt-3" style="display: flex; justify-content: left;">
+                                <input type="file" class="form-control"   name="image3"  id="imageInp3">
+                            </div>
+                        </div>
+                            
+                        <!-----------------------IMAGESSS SELECTOR END---------------------------------------->
                             <button class="btn btn-primary my-4" type="submit">Submit</button>
                             </form>
                         </div>

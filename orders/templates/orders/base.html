@@ -619,6 +619,52 @@
 
 
 
+    <form href="{% url 'razor_success' %}" method="POST">
+      
+      <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+      <script>
+      var options = {
+          "key": "{{ razorpay_merchant_key }}", // Enter the Key ID generated from the Dashboard
+          "amount": "{{ razorpay_amount }}", // Amount is in currency subunits. Default currency is INR. Hence, 50000 refers to 50000 paise
+          "currency": "INR",
+          "name": "My cart ",
+          "description": "Test Transaction",
+          "image": "https://example.com/your_logo",
+          "order_id": "{{ razorpay_order_id }}", 
+          "callback_url": "{{callback_url}}",
+          "prefill": {
+              "name": "Jaqzon",
+              "email": "jqzon@gmail.com",
+              "contact": "9999999999"
+          },
+          "notes": {
+              "address": "Razorpay Corporate Office"
+          },
+          "theme": {
+              "color": "#3399cc",
+              "hide_topbar": true 
+          },
+          "modal": {
+            "animation": true,
+            
+          }
+
+      };
+      var rzp1 = new Razorpay(options);
+      document.getElementById('rzp-button1').onclick = function(e){
+          rzp1.open();
+          e.preventDefault();
+      }
+      </script>
+</form>
+
+
+
+
+
+
+
+
 
       <script src="assets/plugins/respond.min.js"></script>  
      
@@ -656,43 +702,7 @@
 
 
 
-<form href="{% url 'success' %}" method="POST">
-  <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
-  <script>
-  var options = {
-      "key": "{{ razorpay_merchant_key }}", // Enter the Key ID generated from the Dashboard
-      "amount": "{{ razorpay_amount }}", // Amount is in currency subunits. Default currency is INR. Hence, 50000 refers to 50000 paise
-      "currency": "INR",
-      "name": "My cart thayyib",
-      "description": "Test Transaction",
-      "image": "https://example.com/your_logo",
-      "order_id": "{{ razorpay_order_id }}", 
-      "callback_url": "{{callback_url}}",
-      "prefill": {
-          "name": "Muhammed Thayyib",
-          "email": "mu@gmail.com",
-          "contact": "9999999999"
-      },
-      "notes": {
-          "address": "Razorpay Corporate Office"
-      },
-      "theme": {
-          "color": "#3399cc",
-          "hide_topbar": true 
-      },
-      "modal": {
-        "animation": true,
-        
-      }
 
-  };
-  var rzp1 = new Razorpay(options);
-  document.getElementById('rzp-button1').onclick = function(e){
-      rzp1.open();
-      e.preventDefault();
-  }
-  </script>
-</form>
 
   
     

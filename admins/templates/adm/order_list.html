@@ -200,10 +200,16 @@
                                                 <td>{{order.payment_method}}</td>
                                                 <td>{{order.created_at}}</td>
                                                 <td>{{order.status}}</td>
-
+                                                {% if not order.status == 'Cancelled'%}
                                                 <td>
                                                     <a href="{% url 'order_actions' order.id%}"> <button class="btn btn-warning" onclick="return confirm ('Are you sure to cancel?')" >Cancel</button> </a>
                                                 </td>
+                                                {% else %}
+                                                <td>
+                                                    <button class="btn btn-warning" disabled onclick="return confirm ('Are you sure to cancel?')" >Cancelled</button>
+                                                </td>
+
+                                                {% endif %}
                                             </tr>
                                             {% endfor %}
                                          

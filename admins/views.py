@@ -102,12 +102,23 @@ def cate_add(request):
         new.description         = request.POST.get('description')
         new.slug                = slugify(new.category_name)
 
+        var1  = new.category_name
+
+        if Category.objects.filter(category_name=new.category_name).exists():
+            messages.info(request, "Category {} already exists " .format(var1))
+            print('category exits')
+            return redirect('AddCategory')
+
+
         if new.category_name =='' :
             messages.info(request, "Category fields cannot be blank")
             print('Filed blank')
             return redirect('AddCategory')
+            
         if len(request.FILES) != 0:
+            print('ENTERING IMAGE')
             new.cat_image       = request.FILES.get('image')   
+            print("IMAGE ADDED")
         new.save()
         print("CATEGORY ADDEDD SUCCESSFULLY")
         return redirect(cate_view)
@@ -175,7 +186,9 @@ def prouct_add(request):
         pro_obj.category            = Category.objects.get(id=categ)
 
         if len(request.FILES) != 0:
-            pro_obj.images          = request.FILES.get('image')    
+            pro_obj.images              = request.FILES.get('image')    
+            pro_obj.images_two          = request.FILES.get('image2')    
+            pro_obj.images_three        = request.FILES.get('image3')    
             pro_obj.save()
         else:
             messages.error(request, "Please insert an image ")
@@ -195,6 +208,15 @@ def product_edit(request, id):
             if product_detail.images:
                 os.remove(product_detail.images.path)
             product_detail.images       = request.FILES.get('image')
+
+            if product_detail.images_two:
+                os.remove(product_detail.images.path)
+            product_detail.images_two       = request.FILES.get('image2')
+
+            if product_detail.images_three:
+                os.remove(product_detail.images.path)
+            product_detail.images_three       = request.FILES.get('image3')
+
         product_detail.product_name     = request.POST.get('product_name')
         product_detail.description      = request.POST.get('description')
         product_detail.price            = request.POST.get('price')
@@ -220,7 +242,7 @@ def product_delete(request, id):
 
 
 def order_list(request):
-    orders = Order.objects.all()
+    orders = Order.objects.all().order_by('-id')
     return render(request, 'adm/order_list.html', {'orders': orders})
 
 
