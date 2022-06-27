@@ -172,10 +172,9 @@
                 <div class="row g-4">
     
                     <div class="col-12">
-                        <div class="bg-light rounded h-100 p-4">
-                            <h6 class="mb-4">Orders Management</h6>
-
-                                        <table class="table table-hover">
+                        <div class="bg-light rounded h-100 p-4 ">
+                            <h6 class="mb-4 btn btn-outline-primary ">Orders Management</h6>
+                                        <table class="table text-start align-middle table-bordered table-hover mb-0 " style="border-color: aquamarine;">
                                             <thead>
                                             <tr>
                                                 <th scope="col">Order #</th>
@@ -187,19 +186,31 @@
                                                 <th scope="col">Created Date</th>
                                                 <th scope="col">Status</th>
                                                 <th scope="col">Actions</th>
+                                                <th scope="col">Cancel</th>
                                             </tr>
                                             </thead>
                                             <tbody>
-                                                {% for order in orders %}
+                                                {% for order in orders  %}
+                                               
+                                                
                                             <tr>
                                                 <th scope="row">{{order.id}}</th>
                                                 <td>{{order.first_name}}</td>
                                                 <td>{{order.email}}</td>
                                                 <td>{{order.city}}</td>
                                                 <td>{{order.state}} </td>
-                                                <td>{{order.payment_method}}</td>
+                                                <td>{{order.payment.payment_method}}</td>
                                                 <td>{{order.created_at}}</td>
                                                 <td>{{order.status}}</td>
+                                                <td>
+
+                                                    <!-- <div class="modal-dialog modal-dialog-centered"> -->
+                                                        <a href="{%url 'change_status' order.id %}" class="btn btn-info " >Edit</button> </a>
+                                                      
+
+
+
+                                                </td>
                                                 {% if not order.status == 'Cancelled'%}
                                                 <td>
                                                     <a href="{% url 'order_actions' order.id%}"> <button class="btn btn-warning" onclick="return confirm ('Are you sure to cancel?')" >Cancel</button> </a>
@@ -211,7 +222,8 @@
 
                                                 {% endif %}
                                             </tr>
-                                            {% endfor %}
+                                            
+                                            {% endfor and %}
                                          
                                             </tbody>
                     ```      </table>

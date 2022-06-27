@@ -28,6 +28,23 @@
 
     <!-- Template Stylesheet -->
     <link href="{% static 'adm/css/style.css' %}" rel="stylesheet">
+
+
+<style>
+    div.sticky {
+        position: -webkit-sticky;
+        position: sticky;
+        top: 0;
+        background-color: yellow;
+        padding: 50px;
+        font-size: 20px;
+      }
+      </style>
+
+
+
+
+
 </head>
 
 <body>
@@ -97,13 +114,16 @@
                 </div>
             </nav>
             <!-- Table Start -->
-     <div class="container-fluid pt-4 px-4">
-            <div class="row g-4">
+            <nav><h4 class="" style="position: fixed;" >Product Management</h4></nav>
+     <div class="container-fluid pt-1 px-4">
+       
+            <div class="row g-4 ">
 
                 <div class="col-12">
+                    
                     <div class="bg-light rounded h-100 p-4">
-                        <h6 class="mb-4">Product Management</h6>
-                        <div class="table-resposnive table-bordered ">
+                       
+                        <div class="table-resposnive table-bordered hover ">
                             <table class="table">
                                 <thead>
                                     <tr>
@@ -159,6 +179,8 @@
                         
                     </div>
             </div>
+            
+
             <center><a href="add_pro"><button class="btn btn-primary" >Add Product</button></center>
      </div>
 

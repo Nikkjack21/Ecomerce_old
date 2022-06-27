@@ -1,5 +1,7 @@
 {% extends 'adm/base.html'%}
 
+
+{% load mathfilters %}
 {% block content %}
 {% load static %}
 
@@ -89,9 +91,23 @@
  <div class="container-fluid pt-4 px-4">
     <div class="bg-light text-center rounded p-4">
         <div class="d-flex align-items-center justify-content-between mb-4">
+        
             <a href="" class="mb-0 btn btn-outline-primary disabled"> Full Sales  Report</a>
+
+            <!----------------SEARCH SALES REPORT-------------------------------------->
+                <div>
+                  <form method="POST" action = "{% url 'show_result'  %}">
+                    {% csrf_token %}
+                  From :&nbsp<input type='date' class="form-control-sm" name="fromdate"/>&nbsp &nbsp &nbsp
+                  To :&nbsp<input type='date' class="form-control-sm" name="todate"/>
+                  <input type="submit" class="btn btn-outline-info btn-sm" value="Search"/>
+                </div>
+
+           <!----------------SEARCH SALES REPORT-END------------------------------------->
+
             
             <div class="d-flex align-items-center justify-content-between ">
+              
               
                     <!-----------------REPORT DROP DOWN-------------------------------->
                     <div class="dropdown mx-3">
@@ -148,6 +164,7 @@
                       
           <!-----------------REPORT DROP DOWN ENDS-------------------------------->
             </div>
+            
  
   </div>
   
@@ -156,17 +173,36 @@
         </div>
 
 
-        
-
-
-
-
-
-
-
-
-
         </div>
+
+        {% if items.has_other_pages %}
+        <nav aria-label="Page navigation example"></nav>
+        <ul class="pagination">
+          {% if items.has_previous %}
+            <li class="page-item" ><a class="page-link" href="?page={{ items.previous_page_number }}">&laquo;</a></li>
+          {% else %}
+            <li class="page-link disabled"> <span aria-hidden="true">&laquo;</span></li>
+          {% endif %}
+          {% for i in items.paginator.page_range %}
+            {% if items.number == i %}
+              <li class=" page-item active"><span> {{ i }}</span> <span class=" page-linksr-only"></span></li>
+            {% else %}
+              <li class="page-item" ><a class="page-link" href="?page={{ i }}">{{ i }}</a></li>
+            {% endif %}
+          {% endfor %}
+          {% if items.has_next %}
+            <li><a href="?page={{ items.next_page_number }}">&raquo;</a></li>
+          {% else %}
+            <li class="disabled"><span>&raquo;</span></li>
+          {% endif %}
+        </ul>
+      </nav>
+
+        {% endif %}
+      
+
+
+
      
         <table class="table table-bordered mt-3 "  style="border: red;background-color: rgb(181, 238, 228) ;" >
             <tr>
@@ -192,15 +228,16 @@
                 </thead>
                 <tbody>
                    
-                        {% for sales in salesreport %}
+                        {% for sales in items %}
                         <tr>
                         <!-- <td><input class="form-check-input" type="checkbox"></td> -->
-                        <td>{{ forloop.counter }}</td>
+                        <td>{{ forloop.counter}}</td>
                         <td>{{ sales.created_at }}</td>
                         <td>{{ sales.order_number }}</td>
   
                         <td>{{ sales.order_total }}</td>
                         <td><a class="btn btn-sm btn-primary" href="">Detail</a></td>
+                 
                     </tr>
                         {% endfor %}
                    
@@ -208,8 +245,7 @@
                 </tbody>
             </table>
         </div>
-    </div>
-</div>
+
 <!-- Recent Sales End -->
 
 
@@ -217,4 +253,6 @@
 
 
 
+
 {% endblock %}
+

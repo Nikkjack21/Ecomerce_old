@@ -1,0 +1,128 @@
+{% load static %}
+    <!-- BEGIN TOP BAR -->
+    <div class="pre-header  ">
+        <div class="container" >
+            <div class="row">
+                <!-- BEGIN TOP BAR LEFT PART -->
+                <div class="col-md-6 col-sm-6 additional-shop-info">
+                
+                </div>
+                <!-- END TOP BAR LEFT PART -->
+                <!-- BEGIN TOP BAR MENU -->
+                <div class="col-md-6 col-sm-6 additional-nav">
+                    <ul class="list-unstyled list-inline pull-right">
+                      <li><a href="{% url 'my_account' %}">My Account</a></li>
+                      <li><a href=" #">My Wishlist</a></li>
+                      <li><a href="cart/">Checkout</a></li>
+                      {% if user.is_authenticated %}
+                      <li>Welcome, {{user.username}}</li>
+                      <li><a href="signout/">Log Out</a></li>
+                      {% else %}
+
+                        <li><a href="signin/">Log In</a></li>
+
+                        {% endif %}
+                    </ul>
+                </div>
+                <!-- END TOP BAR MENU -->
+            </div>
+        </div>        
+    </div>
+    <!-- END TOP BAR -->
+
+    <!-- BEGIN HEADER -->
+    <div class="header" >
+      <div class="container  ">
+        <a class="site-logo" href="/"><img src="static/assets/corporate/img/logos/resizeZhea-logos1.svg" alt="Zhea Fashion"></a>
+
+        <!-- BEGIN CART -->
+        <div class="top-cart-block">
+          <div class="top-cart-info">
+            <a href="javascript:void(0);" class="top-cart-info-count">{{cart_count}} items</a>
+            <a href="javascript:void(0);" class="top-cart-info-value">{{total}}</a>
+          </div>
+          <i class="fa fa-shopping-cart"> </i>
+                        
+          <div class="top-cart-content-wrapper">
+            <div class="top-cart-content">
+              <ul class="scroller" style="height: 250px;">
+                <li>
+                  <a href="shop-item.html"><img src="{% static 'assets/pages/img/cart-img.jpg' %}" alt="Rolex Classic Watch" width="37" height="34"></a>
+                  <span class="cart-content-count">x 1</span>
+                  <strong><a href="shop-item.html">Rolex Classic Watch</a></strong>
+                  <em>₹1230</em>
+                  <a href="javascript:void(0);" class="del-goods">&nbsp;</a>
+                </li>
+              
+              </ul> 
+
+              <div class="text-right">
+                <a href="{% url 'cart' %}" class="btn btn-default">View Cart</a>
+                <a href="shop-checkout.html" class="btn btn-primary">Checkout</a>
+              </div>
+            </div>
+          </div>            
+        </div>
+        <!--END CART -->
+
+        <!-- BEGIN NAVIGATION -->
+        <div class="header-navigation ">
+          <ul>
+            <li >
+              <a href="products/">
+                All Products
+                
+              </a>
+              {% for main in main_cat %}
+            <li class="dropdown dropdown-megamenu">
+             
+              <a class="dropdown-toggle" data-toggle="dropdown" data-target="#" href="javascript:;">
+                {{main.name}} 
+                
+              </a>
+                
+              <!-- BEGIN DROPDOWN MENU -->
+              <ul class="dropdown-menu">
+                {% for cat in main.subcategory.all %}
+                <li class="dropdown-submenu">
+                
+                  <a tabindex="-1" href="/storecat/{{cat.id}}">{{cat.category_name}} <i class="fa fa-angle-right"></i></a>
+     
+                
+                 </li>
+                 {% endfor %}
+               
+              </ul> 
+              <!-- END DROPDOWN MENU -->
+           
+            </li>
+            {% endfor %}
+         
+            
+      
+          
+              
+            
+
+            <!-- BEGIN TOP SEARCH -->
+            <li class="menu-search">
+              <span class="sep"></span>
+              <i class="fa fa-search search-btn"></i>
+              <div class="search-box">
+                <form action="#">
+                  <div class="input-group">
+                    <input type="text" placeholder="Search" class="form-control">
+                    <span class="input-group-btn">
+                      <button class="btn btn-primary" type="submit">Search</button>
+                    </span>
+                  </div>
+                </form>
+              </div> 
+            </li>
+            <!-- END TOP SEARCH -->
+          </ul>
+        </div>
+        <!-- END NAVIGATION -->
+      </div>
+    </div>
+    <!-- Header END -->

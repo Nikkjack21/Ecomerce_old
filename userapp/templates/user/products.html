@@ -1,4 +1,5 @@
 {% load static %}
+{% load mathfilters %}
 <!DOCTYPE html>
 <!--[if !IE]><!-->
 <html lang="en">
@@ -55,6 +56,7 @@
 
 <!-- Body BEGIN -->
 <body class="ecommerce">
+  {% include "user/navbar.html" %}
     <!-- BEGIN STYLE CUSTOMIZER -->
     <div class="color-panel hidden-sm">
       <!-- <div class="color-mode-icons icon-color"></div> -->
@@ -79,25 +81,7 @@
             <div class="row">
                 <!-- BEGIN TOP BAR LEFT PART -->
                 <div class="col-md-6 col-sm-6 additional-shop-info">
-                    <!-- <ul class="list-unstyled list-inline">
-                        <li><i class="fa fa-phone"></i><span>+1 456 6717</span></li>
-                      
-                        <li class="shop-currencies">
-                            <a href="javascript:void(0);">€</a>
-                            <a href="javascript:void(0);">£</a>
-                            <a href="javascript:void(0);" class="current">₹</a>
-                        </li>
-                        
-                        <li class="langs-block">
-                            <a href="javascript:void(0);" class="current">English </a>
-                            <div class="langs-block-others-wrapper"><div class="langs-block-others">
-                              <a href="javascript:void(0);">French</a>
-                              <a href="javascript:void(0);">Germany</a>
-                              <a href="javascript:void(0);">Turkish</a>
-                            </div></div>
-                        </li>
-                       
-                    </ul> -->
+       
                 </div>
                 <!-- END TOP BAR LEFT PART -->
                 <!-- BEGIN TOP BAR MENU -->
@@ -140,64 +124,7 @@
                         
           <div class="top-cart-content-wrapper">
             <div class="top-cart-content">
-              <!-- <ul class="scroller" style="height: 250px;">
-                <li>
-                  <a href="shop-item.html"><img src="{% static 'assets/pages/img/cart-img.jpg' %}" alt="Rolex Classic Watch" width="37" height="34"></a>
-                  <span class="cart-content-count">x 1</span>
-                  <strong><a href="shop-item.html">Rolex Classic Watch</a></strong>
-                  <em>₹1230</em>
-                  <a href="javascript:void(0);" class="del-goods">&nbsp;</a>
-                </li>
-                <li>
-                  <a href="shop-item.html"><img src="{% static 'assets/pages/img/cart-img.jpg' %}" alt="Rolex Classic Watch" width="37" height="34"></a>
-                  <span class="cart-content-count">x 1</span>
-                  <strong><a href="shop-item.html">Rolex Classic Watch</a></strong>
-                  <em>₹1230</em>
-                  <a href="javascript:void(0);" class="del-goods">&nbsp;</a>
-                </li>
-                <li>
-                  <a href="shop-item.html"><img src="{% static 'assets/pages/img/cart-img.jpg' %}" alt="Rolex Classic Watch" width="37" height="34"></a>
-                  <span class="cart-content-count">x 1</span>
-                  <strong><a href="shop-item.html">Rolex Classic Watch</a></strong>
-                  <em>₹1230</em>
-                  <a href="javascript:void(0);" class="del-goods">&nbsp;</a>
-                </li>
-                <li>
-                  <a href="shop-item.html"><img src="{% static 'assets/pages/img/cart-img.jpg' %}" alt="Rolex Classic Watch" width="37" height="34"></a>
-                  <span class="cart-content-count">x 1</span>
-                  <strong><a href="shop-item.html">Rolex Classic Watch</a></strong>
-                  <em>₹1230</em>
-                  <a href="javascript:void(0);" class="del-goods">&nbsp;</a>
-                </li>
-                <li>
-                  <a href="shop-item.html"><img src="{% static 'assets/pages/img/cart-img.jpg' %}" alt="Rolex Classic Watch" width="37" height="34"></a>
-                  <span class="cart-content-count">x 1</span>
-                  <strong><a href="shop-item.html">Rolex Classic Watch</a></strong>
-                  <em>₹1230</em>
-                  <a href="javascript:void(0);" class="del-goods">&nbsp;</a>
-                </li>
-                <li>
-                  <a href="shop-item.html"><img src="{% static 'assets/pages/img/cart-img.jpg' %}" alt="Rolex Classic Watch" width="37" height="34"></a>
-                  <span class="cart-content-count">x 1</span>
-                  <strong><a href="shop-item.html">Rolex Classic Watch</a></strong>
-                  <em>₹1230</em>
-                  <a href="javascript:void(0);" class="del-goods">&nbsp;</a>
-                </li>
-                <li>
-                  <a href="shop-item.html"><img src="{% static 'assets/pages/img/cart-img.jpg' %}" alt="Rolex Classic Watch" width="37" height="34"></a>
-                  <span class="cart-content-count">x 1</span>
-                  <strong><a href="shop-item.html">Rolex Classic Watch</a></strong>
-                  <em>₹1230</em>
-                  <a href="javascript:void(0);" class="del-goods">&nbsp;</a>
-                </li>
-                <li>
-                  <a href="shop-item.html"><img src="{% static 'assets/pages/img/cart-img.jpg' %}" alt="Rolex Classic Watch" width="37" height="34"></a>
-                  <span class="cart-content-count">x 1</span>
-                  <strong><a href="shop-item.html">Rolex Classic Watch</a></strong>
-                  <em>₹1230</em>
-                  <a href="javascript:void(0);" class="del-goods">&nbsp;</a>
-                </li>
-              </ul> -->
+         
               <div class="text-right">
                 <a href="shop-shopping-cart.html" class="btn btn-default">View Cart</a>
                 <a href="shop-checkout.html" class="btn btn-primary">Checkout</a>
@@ -521,10 +448,15 @@
                 {% for product in products %}
                 <!-- PRODUCT ITEM START -->
                 <div class="col-md-4 col-sm-6 col-xs-12">
-                 
 
                   <div class="product-item">
+
                     <div class="pi-img-wrapper">
+                      {% if product.pro_offer %}
+                     
+                      <span class="span p-2 " style="background-color: rgb(235, 17, 17); position: absolute; color: azure; left: 19rem; ">{{product.pro_offer.discount}}% off</span>
+                    
+                      {% endif %}
                       <img src="{{product.images.url}}" style="width:25rem; height:29rem;" class="img-responsive" alt="Berry Lace Dress">
                       <div>
                         <a href="{{product.images.url}}" class="btn btn-default fancybox-button">Zoom</a>
@@ -532,9 +464,20 @@
                       </div>
                     </div>
                     <h3><a href="{{ product.get_url }}">{{product.product_name}}</a></h3>
-                    <div style="color: red; font-size: 15px;" >&#8377; {{product.price}}</div>
+                    {% if product.pro_offer %}
+                    <div style="color: red; font-size: 15px;" > <del class="text-muted ml-2">&#8377; {{product.price}}</del>
+                      &#8377; {{product.pro_offer.discount|mul:product.price|div:100|sub:product.price|abs}}
+                      </div>
+                    {% else %}
+                    <div style="color: red; font-size: 15px;" > &#8377; {{product.price}}</div>
+                    {% endif %}
                     <a href="{% url 'add_cart' product.id %}" class="btn btn-default add2cart">Add to cart</a>
+                    {% if product.pro_offer %}
+                      <div class="sticker sticker-sale"></div>
+                    {% endif %}
+                    
                   </div>
+                  
                 
               
               </div>

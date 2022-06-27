@@ -2,6 +2,7 @@ import datetime
 from email.mime import image
 from multiprocessing import context
 import os
+from pydoc import pager
 from threading import local
 from unicodedata import category, name
 from django.contrib import messages
@@ -13,13 +14,16 @@ from store.models import Product
 from slugify import slugify
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.cache import cache_control
-from orders.models import Order
-from cartapp.models import ProductOffer
-from .forms import ProductOfferForm
+from orders.models import Order, OrderProduct, Payment, RazorPay
+from cartapp.models import CategoryOffer, ProductOffer
+from .forms import OrderEditForm, ProductOfferForm, CategoryOfferForm
 from django.db.models import Sum,Count
 from decimal import Decimal
 from django.utils.text import Truncator
 from django.db.models.functions import TruncDate, TruncDay, TruncMonth, TruncWeek
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+from django.db.models.functions import ExtractMonth,ExtractDay
+import calendar
 # Create your views here.
 
 
@@ -54,7 +58,60 @@ def admin_signin(request):
 @cache_control (must_revalidate=True, no_cache=True, no_store=True)
 @login_required(login_url='adminsignin/')
 def admin_home(request):
-    return render(request, 'adm/admin_index.html')
+    #ORDER GRAPH
+    orderbyday = Order.objects.annotate(day=ExtractDay('created_at')).values('day').annotate(count=Count('id'))
+    print(orderbyday)
+    dayday =[]
+    orderperday =[]
+    for o in orderbyday:
+        dayday.append(o['day'])
+        orderperday.append(o['count'])
+    order = Order.objects.annotate(month=ExtractMonth('created_at')).values('month').annotate(count=Count('id')).values('month','count')
+    monthNumber = []
+    totalOrder = []
+    for ord in order:
+        monthNumber.append(calendar.month_name[ord['month']])
+        totalOrder.append(ord['count'])
+    #total users
+    users_count = Account.objects.all().count()
+
+    #total revenue
+    revenue=0
+    order = OrderProduct.objects.all()
+    for item in order:
+        revenue = revenue + item.product_price
+
+    #total order
+    order_count = Order.objects.all().count()
+
+ 
+    completed_order = Order.objects.filter(status='Completed').count()
+    pending_order = Order.objects.filter(status='Order Confirmed').count()
+    accepted_order = Order.objects.filter(status='Accepted').count()
+    cancelled_order = Order.objects.filter(status='Cancelled').count()
+    Returned_order = Order.objects.filter(status='Returned').count()
+    order_status_list = []
+    order_status_list.append(completed_order)
+    order_status_list.append(accepted_order)
+    order_status_list.append(pending_order)
+    order_status_list.append(cancelled_order)
+    order_status_list.append(Returned_order)
+    print(order_status_list)
+    recent_order = Order.objects.all().order_by('-created_at')[:5]
+
+    context = {
+        'monthNumber':monthNumber,
+        'totalOrder':totalOrder,
+        'dayday':dayday,
+        'orderperday':orderperday,
+        'users_count':users_count,
+        'revenue':revenue,
+        'order_count':order_count,
+        'order_status_list':order_status_list,
+        'recent_order': recent_order
+     
+        }
+    return render(request, 'adm/admin_index.html', context)
 
 def admin_out(request):
     logout(request)
@@ -243,6 +300,7 @@ def product_delete(request, id):
 
 def order_list(request):
     orders = Order.objects.all().order_by('-id')
+    # payments = Payment.objects.all()
     return render(request, 'adm/order_list.html', {'orders': orders})
 
 
@@ -250,6 +308,41 @@ def order_actions(request, id):
     order  = Order.objects.filter(id=id)
     order.update(status='Cancelled')
     return redirect('order_list')
+
+
+
+
+def change_status(request,id):
+    orders = Order.objects.get(id=id)
+    print(orders)
+    form = OrderEditForm(instance=orders)
+    if request.method=='POST':
+        form = OrderEditForm(request.POST)
+        status = request.POST.get('status')
+        orders.status = status
+        orders.save()
+        return redirect ('order_list')
+    context = {
+        'orders':orders,
+        'form':form
+    }
+    return render(request,'adm/change_status.html',context)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -292,6 +385,47 @@ def delete_pro_offer(request, id):
     return redirect(offer_product)
 
 
+def offer_category(request):
+    off_cat  = CategoryOffer.objects.all()
+
+    context = {
+        'off_cat': off_cat,
+    }
+    return render(request, 'adm/category_offer.html', context)
+
+
+def add_offer_cat(request):
+    form = CategoryOfferForm(request.POST)
+    print("hello category offer    OFFER IS ACTUALL WORKING")
+    if form.is_valid():
+        form.save()
+        messages.info(request,'Category offer added successfully')
+        return redirect(offer_category)
+    context ={
+        'form':form
+    }
+    return render(request, 'adm/add_cat_offer.html', context)
+
+def edit_cat_offer(request,id):
+    offer = CategoryOffer.objects.get(id=id)
+    form = CategoryOfferForm(instance=offer)
+    if request.method =="POST":
+        form = CategoryOfferForm(request.POST,instance=offer)
+        form.save()
+        messages.success(request,'Category offer updated successfully')
+        return redirect(offer_category)
+    return render (request,'adm/edit_cat_offer.html',{'form':form,'offer':offer})
+
+
+
+def delete_cat_offer(request, id):
+    offer = CategoryOffer.objects.get(id=id)
+    offer.delete()
+    return redirect('cat_offer')
+
+
+
+
 
 
 
@@ -300,11 +434,23 @@ def sales_report(request):
     total = 0
     total= salesreport.aggregate(Sum('order_total')).get('order_total__sum')
     RoundTotal =("{:0.2f}".format(total))
+
+    
+    p           = Paginator(salesreport, 10)
+    page_num  = request.GET.get('page')
+    try:
+        page        = p.page (page_num)
+    # except EmptyPage:
+    #     page        = p.page(1)
+    except PageNotAnInteger:
+        page        = p.page(1)
+
     
     context = {
-        'salesreport': salesreport ,
-        'total':    total,
+        
+        # 'salesreport': salesreport,
         'RoundTotal': RoundTotal,
+        'items':page,
 
     }
     return render(request,'adm/sales_report.html',context)
@@ -387,3 +533,70 @@ def weekly_report(request,date):
         messages.info(request,"No Orders")
     return render(request,'adm/sales_report.html',context)
 
+
+
+
+
+def show_result(request):
+    order = Order.objects.all()
+
+    pag   = sales_report(request)
+    print(pag)
+    print('Pagination')
+    if request.method == "POST":
+        fromdate =request.POST.get('fromdate')
+        todate =request.POST.get('todate')
+        if len(fromdate)<=0 or len(fromdate) <=0:
+            print('fromdate is Zero')
+            messages.error(request, "Please enter date correctly")
+            return redirect(sales_report)
+    
+
+        if len(fromdate) > 0 or len(todate) > 0 :
+            frm = fromdate.split("-")
+            tod = todate.split("-")
+
+            fm = [int(x) for x in frm]
+            todt = [int(x) for x in tod]
+            print(fm)
+
+                
+            salesreport = Order.objects.filter(created_at__gte=datetime.date(fm[0],fm[1],fm[2]), created_at__lte=datetime.date(todt[0],todt[1],todt[2])).annotate(day=TruncDate('created_at')).values('day').annotate(count=Count('id')).annotate(sum=Sum('order_total')).order_by('-day')
+            
+            context = {
+
+                'salesreport' : salesreport ,   
+                'pag':pag,
+
+            }
+            print(salesreport)
+            print("111")
+            return render(request,'adm/search_report_sales.html',context)
+        else:
+            report_sales = Order.objects.all()
+            context = {
+                'salesreport': report_sales ,
+                'pag':pag,
+
+             }
+            return render(request,'adm/sales_report.html',context)
+
+    else:
+        salesreport_all = Order.objects.all()
+        context = {
+            'salesreport': salesreport_all ,
+            'pag':pag
+          
+        
+
+        }
+        return render(request,'adm/search_report_sales.html',context)
+
+
+
+
+
+# def dashboard(request):
+
+    
+#     return render (request,'admin_panel/dashboard_adm.html',context)

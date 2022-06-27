@@ -91,71 +91,19 @@
         <div class="d-flex align-items-center justify-content-between mb-4">
             <a href="{% url 'sales_report' %}" class="mb-0 btn btn-outline-primary"> Full Sales  Report</a>
 
-            <div class="d-flex align-items-center justify-content-between ">
-                    <!-----------------REPORT DROP DOWN-------------------------------->
-                    <div class="dropdown mx-3">
-                        <a class="btn btn-primary dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-bs-toggle="dropdown" aria-expanded="false">
-                          Monthly report
-                        </a>
-                      
-                        <ul class="dropdown-menu" aria-labelledby="dropdownMenuLink" style="">
+        <div>
 
-                          <a class="dropdown-item" href="">January</a>
-                          <a class="dropdown-item" href="">February</a>
-                          <a class="dropdown-item" href="">March</a>
-                          <a class="dropdown-item" href="">April</a>
-                          <a class="dropdown-item" href="">May</a>
-                          <a class="dropdown-item" href="{% url 'monthly_report' 6 %}">June</a>
-                          <a class="dropdown-item" href="">July</a>
-                          <a class="dropdown-item" href="">August</a>
-                          <a class="dropdown-item" href="">September</a>
-                          <a class="dropdown-item" href="">October</a>
-                          <a class="dropdown-item" href="">November</a>
-                          <a class="dropdown-item" href="">December</a>
-                        </ul>
-                      </div>
-                    <div class="dropdown mx-3">
-                        <a class="btn btn-danger dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-bs-toggle="dropdown" aria-expanded="false">
-                          Yearly report
-                        </a>
-                      
-                        <ul class="dropdown-menu" aria-labelledby="dropdownMenuLink" style="">
-                            <a class="dropdown-item" href="{% url 'year_report' 2022 %}">2022</a>
-                            <a class="dropdown-item" href="{% url 'year_report' 2021 %}">2021</a>
-                            <a class="dropdown-item" href="{% url 'year_report' 2020 %}">2020</a>
-                            <a class="dropdown-item" href="{% url 'year_report' 2019 %}">2019</a>
-                            <a class="dropdown-item" href="{% url 'year_report' 2018 %}">2018</a>
-
-                        </ul>
-                      </div>
-                    <div class="dropdown">
-                        <a class="btn btn-warning dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-bs-toggle="dropdown" aria-expanded="false">
-                          weekly report
-                        </a>
-                      
-                        <ul class="dropdown-menu" aria-labelledby="dropdownMenuLink" style="">
-                          <li><a class="dropdown-item" href="">Action</a></li>
-                          <li><a class="dropdown-item" href="#">Another action</a></li>
-                          <li><a class="dropdown-item" href="#">Something else here</a></li>
-                        </ul>
-                      </div>
-
-
-            
-                      
-          <!-----------------REPORT DROP DOWN ENDS-------------------------------->
-            </div>
-     
 
         </div>
      
-        <table class="table table-bordered mt-3">
-            <tr>
-                <th scope="col">Total </th>
-                <th scope="col">₹ &nbsp {{RoundTotal}}</th
-            </tr>
-        </table>
+            <form method="POST" action = "{% url 'show_result'  %}">
+                {% csrf_token %}
+            From :&nbsp<input type='date' name="fromdate"/>&nbsp &nbsp &nbsp
+            To :&nbsp<input type='date' name="todate"/>
+            <input type="submit" value="Search"/>
 
+        </div>
+     
 
         
         <div class="table-responsive">
@@ -182,6 +130,10 @@
   
                         <td>{{ sales.sum |floatformat:2  }}</td>
                         <td><a class="btn btn-sm btn-primary" href="">Detail</a></td>
+                        {% empty %}
+                   
+                        <td>No results to show.</td>
+                   
                     </tr>
                         {% endfor %}
                    
@@ -189,6 +141,38 @@
                 </tbody>
             </table>
         </div>
+
+
+
+        {% if items.has_other_pages %}
+        <nav aria-label="Page navigation example"></nav>
+        <ul class="pagination">
+          {% if items.has_previous %}
+            <li class="page-item" ><a class="page-link" href="?page={{ items.previous_page_number }}">&laquo;</a></li>
+          {% else %}
+            <li class="page-link disabled"> <span aria-hidden="true">&laquo;</span></li>
+          {% endif %}
+          {% for i in items.paginator.page_range %}
+            {% if items.number == i %}
+              <li class=" page-item active"><span> {{ i }}</span> <span class=" page-linksr-only"></span></li>
+            {% else %}
+              <li class="page-item" ><a class="page-link" href="?page={{ i }}">{{ i }}</a></li>
+            {% endif %}
+          {% endfor %}
+          {% if items.has_next %}
+            <li><a href="?page={{ items.next_page_number }}">&raquo;</a></li>
+          {% else %}
+            <li class="disabled"><span>&raquo;</span></li>
+          {% endif %}
+        </ul>
+      </nav>
+
+        {% endif %}
+      
+
+
+
+
     </div>
 </div>
 <!-- Recent Sales End -->

@@ -11,6 +11,7 @@ urlpatterns = [
     path('signup/', views.signup, name='signup'),
     path('my_account/',views.my_account, name='my_account'),
     path('products/', views.p_view, name='products'),
+    path('storecat/<int:id>/', views.pro_store, name='products_by_cat'),
     path('editpro/<int:id>/', views.editProfile, name='edit_profile'),
     path('change_password/', views.changePassword, name='change_password'),
     path('my_orders/', views.my_orders, name='my_orders'),

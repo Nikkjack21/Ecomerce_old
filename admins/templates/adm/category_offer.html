@@ -51,7 +51,7 @@
         <div class="content">
             <!-- Navbar Start -->
             <nav class="navbar navbar-expand bg-light navbar-light sticky-top px-4 py-0">
-                <a href="adminhome" class="navbar-brand d-flex d-lg-none me-4">
+                <a href="admin_home" class="navbar-brand d-flex d-lg-none me-4">
                     <h2 class="text-primary mb-0"><i class="fa fa-hashtag"></i></h2>
                 </a>
                 <a href="#" class="sidebar-toggler flex-shrink-0">
@@ -87,7 +87,7 @@
                                     <thead>
                                         <tr>
                                             <th scope="col">Id</th>
-                                            <th scope="col">Product Name</th>
+                                            <th scope="col"> Category Name</th>
                                             <th scope="col"> valid from </th>
                                             <th scope="col"> valid to</th>
                                             <th scope="col">discount</th>
@@ -97,12 +97,12 @@
                                             
                                         </tr>
                                     </thead>
-                                    {% for off in off_pro %}
+                                    {% for off in off_cat %}
                                     <tbody>
                                        
                                         <tr>
                                             <th scope="row">{{off.id}}</th>
-                                            <td>{{off.product.product_name}}</td>
+                                            <td>{{off.category.category_name}}</td>
                                             <td>{{off.valid_from}}</td>
                                             <td>{{off.valid_to}}</td>
                                             <td>{{off.discount}} %</td>
@@ -111,11 +111,11 @@
                                             
                     
     
-                                               <td><a href="{% url 'edit_pro_offer' off.id %}"><button class="btn btn-primary"  >Edit</button></a></td>
-                                               <td><a href="{% url 'delete_pro_offer' off.id %}"><button class="btn btn-danger" onclick="return confirm('Are you sure you want to delete this?')">Delete</button></a></td>
+                                               <td><a href="{% url 'edit_cat_offer' off.id %}"><button class="btn btn-primary"  >Edit</button></a></td>
+                                               <td><a href="{% url 'delete_cat_offer' off.id %}"><button class="btn btn-danger" onclick="return confirm('Are you sure you want to delete this?')">Delete</button></a></td>
                                            
                                         </tr>
-                                        
+                                       
                                     </tbody>
                                     {% endfor %}
                                 </table>
@@ -124,7 +124,7 @@
                             
                         </div>
                 </div>
-                <a href="{% url 'add_pro_offer' %}"><button class="btn btn-primary" >Add product offer</button>
+                <a href="{% url 'add_cat_offer' %}"><button class="btn btn-primary" >Add Caegory offer</button>
          </div>
     
           <!-- Table End -->

@@ -4,13 +4,14 @@ from multiprocessing import context
 import random
 from turtle import home
 from django.shortcuts import get_object_or_404, redirect, render
-from django.http import HttpResponse
+from django.http import HttpRequest, HttpResponse
 from django.contrib.auth import authenticate,login,logout
 from django.views.decorators.cache import cache_control
 from cartapp.models import CartItem, Cart
 from orders.models import Order
+from projectseven import settings
 from store.models import Product
-from category.models import Category
+from category.models import Category, MainCategory
 from accounts.models import Account, UserProfile
 from django.contrib import messages
 from django.contrib.auth.models import User
@@ -21,14 +22,28 @@ from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator
 from cartapp.views import _cart_id
 from django.http import HttpResponse
 from accounts.forms import UserForm, UserProfileForm
+import copy
 
-
-@cache_control(no_cache=True, must_revalidate=True, no_store=True)
-def index(request):
+def rend_dy(request):
+    main_cat      = MainCategory.objects.all()
     products = Product.objects.all().filter(is_available=True)
 
     context = {
         'products' : products,
+        'main_cat':main_cat,
+    }
+    return context
+
+
+
+
+def index(request):
+    main_cat      = MainCategory.objects.all()
+    products = Product.objects.all().filter(is_available=True)
+
+    context = {
+        'products' : products,
+        'main_cat':main_cat,
     }
    
     return render(request, 'user/shop-index.html', context)
@@ -162,11 +177,34 @@ def signup(request):
 
 @cache_control(no_cache=True, must_revalidate=True, no_store=True)
 def signout(request):
-
+        # cart = copy.deepcopy(Cart(request).cart)
         logout(request)
+        
         print("GETTING LOGGED OUT") 
         messages.info(request, 'You have logged out')
         return redirect(index)
+
+
+
+def pro_store(request, id ):
+    main_cat = MainCategory.objects.all()
+    category  = Category.objects.get(id=id)
+    if category is not None:
+        products    = Product.objects.filter(category=category, is_available=True)
+        print("PRO_STORE IS ACTUALYY WROKINGGGGGGGGGG")
+    else:
+        products   = Product.objects.all().filter(is_available=True)
+        print("EYY ITS JUST SHOWING ALL PRODUCTS")
+    
+    categ  = Category.objects.all()
+    context ={
+        'products': products,
+        'categ': categ,
+        'main_cat': main_cat,
+      
+    }
+
+    return render(request, 'user/products.html', context)
     
 
 
@@ -177,15 +215,19 @@ def p_view(request, category_slug=None):
     products           = None
 
     if category_slug   != None:
-        categories = get_object_or_404(Category, slug=category_slug)
+        categories      = get_object_or_404(Category, slug=category_slug)
         products        = Product.objects.filter(category=categories, is_available=True)
-        paginator       = Paginator(products,3)
+        paginator       = Paginator(products,6)
         page            = request.GET.get('page')
+        print('Page is working  ')
+        print(page)
         paged_product   = paginator.get_page(page)
     else:
         products        = Product.objects.all().filter(is_available=True)
-        paginator       = Paginator(products,3)
+        paginator       = Paginator(products,6)
         page            = request.GET.get('page')
+        print('else Page is working  ')
+        print(page)
         paged_product   = paginator.get_page(page)
 
     context = {
@@ -213,8 +255,10 @@ def p_details(request, category_slug, product_slug):
 
 
 def my_account(request):
+    new_ren  = rend_dy(HttpRequest)
+
     if request.user.is_authenticated:
-        return render(request, 'user/myaccount.html')
+        return render(request, 'user/myaccount.html', new_ren)
     else:
         return redirect('signin')
 
