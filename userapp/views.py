@@ -3,6 +3,7 @@ from email import message
 from multiprocessing import context
 import random
 from turtle import home
+from unicodedata import category
 from django.shortcuts import get_object_or_404, redirect, render
 from django.http import HttpRequest, HttpResponse
 from django.contrib.auth import authenticate,login,logout
@@ -12,41 +13,50 @@ from orders.models import Order
 from projectseven import settings
 from store.models import Product
 from category.models import Category, MainCategory
-from accounts.models import Account, UserProfile
+from accounts.models import Account, UserProfile, Wallet
 from django.contrib import messages
 from django.contrib.auth.models import User
 from twilio.rest import Client
 from django.contrib import auth
 from django.contrib.auth.decorators import login_required
 from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator
-from cartapp.views import _cart_id
+from cartapp.views import _cart_id, cart
 from django.http import HttpResponse
 from accounts.forms import UserForm, UserProfileForm
-import copy
+from django. db. models import Q
 
-def rend_dy(request):
-    main_cat      = MainCategory.objects.all()
-    products = Product.objects.all().filter(is_available=True)
+# def rend_dy(request):
+#     main_cat      = MainCategory.objects.all()
+#     products = Product.objects.all().filter(is_available=True)
 
-    context = {
-        'products' : products,
-        'main_cat':main_cat,
-    }
-    return context
+#     context = {
+#         'products' : products,
+#         'main_cat':main_cat,
+#     }
+#     return context
+
+
+
+
+# def navbar(request):
+#     main_cat      = MainCategory.objects.all()
+#     products = Product.objects.all().filter(is_available=True)
+
+#     context = {
+#         'products' : products,
+#         'main_cat':main_cat,
+#     }
+   
+#     return render(request, 'user/navbar.html', context)
+
+
+
 
 
 
 
 def index(request):
-    main_cat      = MainCategory.objects.all()
-    products = Product.objects.all().filter(is_available=True)
-
-    context = {
-        'products' : products,
-        'main_cat':main_cat,
-    }
-   
-    return render(request, 'user/shop-index.html', context)
+    return render(request, 'user/shop-index.html')
 
 
 
@@ -65,7 +75,30 @@ def signin(request):
 
 
             if user is not None:
+                try:
+                    print("ENtering try BLock")
+                    cart        = Cart.objects.get(cart_id=_cart_id(request))
+                    is_cart_item_exists    = CartItem.objects.filter(cart=cart).exists()
+                    print(is_cart_item_exists)
+                    if is_cart_item_exists:
+                        cart_items  = CartItem.objects.filter(cart=cart)
+                        print(cart_items)
+
+                        for cart_item in cart_items:
+                            cart_item.user = user
+                            print(cart_item.user)
+                            cart_item.save()
+                except:
+                    print("ENtering Except BLock")
+                    pass
                 login(request, user)
+                wall = Wallet.objects.filter(user=request.user).exists()
+                print('wallet user exists')
+                if not wall:
+                    wall = Wallet.objects.create(user=request.user)
+                    wall.save()
+                    print('wallet created for user')
+
                 messages.success(request, 'You have succesfully logged in', )
                 return redirect(index)
 
@@ -88,7 +121,7 @@ def otp(request):
         phone_number = request.POST['phone_number']
         if mobile == phone_number:
             account_sid     = 'AC29ac10e058d302306bbbd63a523a0f15'
-            auth_token      = '493bef2657652d28660c426702d59617'
+            auth_token      = 'c9d3fe5697fe29f111d22a49e8e88d72'
 
             client      = Client(account_sid, auth_token)
             global otp
@@ -139,7 +172,7 @@ def signup(request):
         last_name       = request.POST.get('last_name')
         email           = request.POST.get('email')
         username        = request.POST.get('username')
-        phone_number    = request.POST.get('phone_number')
+        # phone_number    = request.POST.get('phone_number')
         password        = request.POST.get('password')
         password2       = request.POST.get('password2')
 
@@ -161,8 +194,14 @@ def signup(request):
 
                 else:
                     myuser = Account.objects.create_user(first_name, last_name, username, email, password)
-                    myuser.phone_number = phone_number
+                    # myuser.phone_number = phone_number   
                     myuser.save()
+                    user_name = myuser
+                    context = { 
+                        'user_name':user_name
+                    }
+                    #messages.success(request,'Welcome , Registered Succesfully !')
+                    return render(request,'reg/verify.html',context)
 
                     print('user created')
                     messages.success(request, "You have successfully created account ")
@@ -175,9 +214,133 @@ def signup(request):
     return render(request, 'reg/signup.html')
 
 
+
+
+def phone_verfiy(request):
+    return render(request, 'reg/verify.html')
+
+
+def phone_verification(request):
+    user_name = request.GET.get('user_name')
+    print(user_name)
+    if request.method == 'POST':
+        
+        print("1")
+        count =0
+        phone_number = request.POST['phone_number']
+
+        for i in phone_number:
+            count=count+1
+        
+        c="+91" + phone_number
+        
+        
+        if count == 10 :
+            print("0000")
+            if Account.objects.filter(phone_number=phone_number).exists():
+                user1= Account.objects.filter(username = user_name)
+                user1.delete()
+                messages.info(request,'number already exist ! !')
+                return redirect('signup')
+            else:
+                # Your Account SID twilio
+                account_sid = "AC29ac10e058d302306bbbd63a523a0f15"
+                # Your Auth Token twilio
+                auth_token  = "c9d3fe5697fe29f111d22a49e8e88d72"
+
+                client = Client(account_sid, auth_token)
+                global otps
+                otps = str(random.randint(1000,9999))
+                message = client.messages.create(
+                    to="+91" + phone_number , 
+                    
+                    from_="+1 850 789 7381",
+                    body="Hello there! Your Login OTP is "+otps)
+                print("1234")
+                
+                context = {
+                    'phone_number': phone_number,
+                    'user_name':user_name,
+
+                }
+                return render (request, 'reg/verification.html',context)
+
+        
+        else :  
+            print("6666")
+            if Account.objects.filter(username = user_name).exists():
+                user1= Account.objects.filter(username = user_name)
+                user1.delete()
+                messages.success(request,'entered phone number is not correct !')
+                return redirect('signup')
+           
+            else : 
+                messages.success(request,'entered phone number is not correct !')
+                return redirect('signup')
+
+    else : 
+            print("3333336")
+
+            messages.success(request,'Please enter correct phone number !')
+            return redirect('signup')
+
+
+
+
+
+
+
+
+def otp_verification(request,phone_number):
+   
+    user_name = request.GET.get('name')
+    print(phone_number)
+    print(user_name)
+
+    if request.method=='POST':
+   
+        otp3 =  request.POST['number']
+        print(otp3)
+       
+       
+        if otp3 == otps :
+            user = Account.objects.filter(username = user_name)
+            use = Account.objects.get(username = user_name)
+            email = use.email
+            first = use.first_name
+            last = use.last_name
+           
+            referel = last+first+email
+            user.update(phone_number=phone_number, referral_code= referel)
+            print(user)
+            print("refferal code created")
+            messages.success(request,"registered successfully")
+            return redirect ('signin')
+        else:
+            if Account.objects.filter( username = user_name).exists():
+                print("''''''''''''''''''''''''''''")
+                user = Account.objects.filter(username = user_name)
+                user.delete()
+                messages.success(request,"register unsuccessfull")
+                return redirect ('signup')
+            else :
+                print("Entering else statementt")
+                messages.success(request,"register unsuccessfull")
+                return redirect ('signup')
+
+    else:
+        return render (request, 'reg/verification.html')
+
+
+
+
+
+
+
+
 @cache_control(no_cache=True, must_revalidate=True, no_store=True)
 def signout(request):
-        # cart = copy.deepcopy(Cart(request).cart)
+
         logout(request)
         
         print("GETTING LOGGED OUT") 
@@ -186,9 +349,11 @@ def signout(request):
 
 
 
-def pro_store(request, id ):
+def pro_store(request, id):
     main_cat = MainCategory.objects.all()
     category  = Category.objects.get(id=id)
+    print('ENTERED PRO STORE')
+
     if category is not None:
         products    = Product.objects.filter(category=category, is_available=True)
         print("PRO_STORE IS ACTUALYY WROKINGGGGGGGGGG")
@@ -200,46 +365,78 @@ def pro_store(request, id ):
     context ={
         'products': products,
         'categ': categ,
-        'main_cat': main_cat,
+        'main_cate': main_cat,
       
     }
 
     return render(request, 'user/products.html', context)
     
 
+#This view shows the main category all products when we are in all products page
+def p_view(request):
+        main_cat      = MainCategory.objects.all()
+    
+        products      = Product.objects.all().filter(is_available=True)
+        print("Entered P_VIEW")
+
+
+        p             = Paginator(products,6)
+        page      = request.GET.get('page')
+
+        if page is not None:
+            paged_product   = p.get_page(page)
+        else:
+            paged_product   = p.get_page(page)
+
+
+        context = {
+                'products' : products,
+                # 'main_cat': main_cat,
+                'products': paged_product,
+        }
+
+        return render(request, 'user/all_products.html', context)  
+
+
+#This view shows the  one main category  products when filtered when we are in all products page
+def main_p_view(request, id):
+        print('THE ID IS NUMBER')
+        main_cate            = MainCategory.objects.get(id=id)
+        print(main_cate)
+        categor      = Category.objects.filter(main_cate=main_cate)
+        print(categor)
+        productss   = Product.objects.filter(category__in=categor, is_available=True)
+        print(productss)
+        main_cat  = MainCategory.objects.all()
+        print(main_cat)
+        p             = Paginator(productss,6)
+        page      = request.GET.get('page')
+
+        if page is not None:
+            paged_product   = p.get_page(page)
+        else:
+            paged_product   = p.get_page(page)
+
+        context ={
+            'main_cat': main_cat,
+            'main_cate': main_cate.id,
+            'products': paged_product,
+            'categos': categor
+            
+        }
+
+        return render(request, 'user/all_products.html', context)  
 
 
 
-def p_view(request, category_slug=None):
-    categories         = None
-    products           = None
 
-    if category_slug   != None:
-        categories      = get_object_or_404(Category, slug=category_slug)
-        products        = Product.objects.filter(category=categories, is_available=True)
-        paginator       = Paginator(products,6)
-        page            = request.GET.get('page')
-        print('Page is working  ')
-        print(page)
-        paged_product   = paginator.get_page(page)
-    else:
-        products        = Product.objects.all().filter(is_available=True)
-        paginator       = Paginator(products,6)
-        page            = request.GET.get('page')
-        print('else Page is working  ')
-        print(page)
-        paged_product   = paginator.get_page(page)
-
-    context = {
-            'products' : paged_product,
-    }
-
-    return render(request, 'user/products.html', context)
 
 
    
 
 def p_details(request, category_slug, product_slug):
+    main_cat      = MainCategory.objects.all()
+    # products = Product.objects.all().filter(is_available=True)
     try:
         single_product   = Product.objects.get(category__slug=category_slug, slug=product_slug)
         in_cart          = CartItem.objects.filter(cart__cart_id=_cart_id(request), product=single_product).exists()
@@ -249,18 +446,14 @@ def p_details(request, category_slug, product_slug):
 
     context = {
         'single_product': single_product,
-        'in_cart': in_cart
+        'in_cart': in_cart,
+        'main_cat': main_cat,
     }
     return render(request,'user/product_detail.html', context)
 
 
 def my_account(request):
-    new_ren  = rend_dy(HttpRequest)
-
-    if request.user.is_authenticated:
-        return render(request, 'user/myaccount.html', new_ren)
-    else:
-        return redirect('signin')
+        return render(request, 'user/myaccount.html', )
 
 
 
@@ -377,9 +570,63 @@ def add_address(request):
 
 
 
+def my_wallet(request):
+    wl = Wallet.objects.all()
+    users = request.user
+    wall = 0
+    count=0
+    wallet = 0
+    if Wallet.objects.filter(user = users).exists():
+        wallet = Wallet.objects.get(user = users)
+    else :
+       wall = Wallet.objects.create(user = users)
+       wall.save()
+    return render(request, 'user/wallet.html', {'wallet': wall, 'wallet': wallet, 'wl':wl})
 
 
 
 
-def verify_num(request):
-    return render(request, 'reg/verification.html')
+
+
+def add_ref(request):
+    user = request.user
+    cod = request.POST['code']
+    print(cod)
+    if user.referral_code != cod :
+        print("Refer code")
+        if Account.objects.filter(referral_code = cod).exists():
+            usr = Account.objects.filter(referral_code = cod)
+            print(usr)
+            use = Wallet.objects.get(user = user)
+            wall = use.balance + 375
+            print(wall)
+            
+            userr = Wallet.objects.filter(user = user)
+            userr.update(balance = wall)
+            A  = Account.objects.filter(username = user)
+            print(A)
+            A.update(ref_active = True)
+            messages.success(request,"Referel Successfull. Balance  Added to your Wallet, Happy Shopping !")
+            return redirect('my_wallet') 
+        else:
+        
+            print("Inner Else")
+            messages.error(request,"You have entered wrong refferal code!")
+            return redirect('my_account') 
+    else:
+        print("Outer else")
+        messages.error(request,"You have entered wrong refferal code!")
+        return redirect('my_account') 
+
+
+
+
+
+def ref_cod_v(request):
+    user = request.user.id
+    usr =  Account.objects.get(id=user)
+    print(usr)
+    context = {
+        'usr': usr
+    }
+    return render(request, 'user/refferal.html', context)

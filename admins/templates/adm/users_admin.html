@@ -52,25 +52,27 @@
                     </div>
                 </div>
                 <div class="navbar-nav w-100">
-                    <a href="adminhome" class="nav-item nav-link "><i class="fa fa-tachometer-alt me-2"></i>Dashboard</a>
+                    <a href="{% url 'admin_home' %}" class="nav-item nav-link active"><i class="fa fa-tachometer-alt me-2"></i>Dashboard</a>
                     <div class="nav-item dropdown">
-                        <a href="user_details" class="nav-link active" ><i class="fa fa-laptop me-2"></i>User Management</a>
+                        <a href=" {% url 'details' %}" class="nav-link " ><i class="fa fa-laptop me-2"></i>User Management</a>
                        
-                    </div>
-                    <a href="category" class="nav-item nav-link"><i class="fa fa-table me-2"></i>Categories</a>
-                    <a href="product_view" class="nav-item nav-link"><i class="far fa-file-alt me-2"></i>Products</a>
+                    </div>                    
                     
+                    <a href="{% url 'category' %}" class="nav-item nav-link"><i class="fa fa-table me-2"></i>Categories</a>
+
+                    <a href=" {% url 'product_view' %} " class="nav-item nav-link"><i class="far fa-file-alt me-2"></i>Products</a>
                     <a href="{% url 'order_list' %}" class="nav-item nav-link"><i class="fa fa-keyboard me-2"></i>Orders</a>
                     <a href="{% url 'sales_report' %}" class="nav-item nav-link "><i class="fa fa-keyboard me-2"></i>Sales Report</a>
 
+                   
                     <div class="nav-item dropdown">
-                        <a href="#" class="nav-link dropdown-toggle " data-bs-toggle="dropdown"><i class="far fa-file-alt "></i>Offer management</a>
+                        <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown"><i class="far fa-file-alt "></i>Offer management</a>
                         <div class="dropdown-menu  bg-transparent border-0">
-                            <a href="/product_offer/" class="dropdown-item">Product Offer</a>
-         
+                            <a href="{% url 'product_offer' %}" class="dropdown-item">Product Offer</a>
+                            <a href="{% url 'cat_offer' %}" class="dropdown-item">Category Offer</a>
+                            
                         </div>
                     </div>
-                   
                 </div>
             </nav>
         </div>
@@ -203,7 +205,7 @@
                                         {% if user.is_active %}    
                                             <td><a href="{% url 'action_user' user.id %}"><button class="btn btn-danger" onclick="return confirm('Are you sure you want to deactivate {{user.username}} ?')" >Deactivate</button></a>
                                         {% else %} 
-                                           <td><a href="{% url 'action_user' user.id %}" ><button class="btn btn-success" onclick="return confirm('Are you sure you want to activate {{user.username}} ?')" >Activate</button></a></td>
+                                           <td><a href="{% url 'action_user' user.id %}" ><button class="btn btn-success" onclick="return confirm('Please confirm to activate {{user.username}} ?')" >Activate</button></a></td>
                                         {% endif %}
                                     </tr>
                                     

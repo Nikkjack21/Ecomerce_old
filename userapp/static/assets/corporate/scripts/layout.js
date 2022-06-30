@@ -177,7 +177,7 @@ var Layout = function () {
         $(".sidebar .dropdown > a").click(function (event) {
             if ($(this).next().hasClass('dropdown-menu')) {
                 event.preventDefault();
-                if ($(this).hasClass("collapsed") == false) {
+                if ($(this).hasClass("collapsed") == true) {
                     $(this).addClass("collapsed");
                     $(this).siblings(".dropdown-menu").slideDown(300);
                 } else {

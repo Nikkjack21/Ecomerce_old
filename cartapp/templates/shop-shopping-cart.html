@@ -127,7 +127,7 @@
 
 <!-- Body BEGIN -->
 <body class="ecommerce">
-  {% include 'user/navbar.html'%}
+
 
     <!-- BEGIN STYLE CUSTOMIZER -->
     <div class="color-panel hidden-sm">
@@ -532,11 +532,41 @@
                     </td>
                   </tr>
                   {% endfor %}
+
+               
+                  
                
                 </table>
+               
                 {% endif %}
                 </div>
                 {% if not cart_items %}
+
+
+                <div class="shopping-total">
+                  <ul>
+                    <li>
+                      <em>Sub total</em>
+                      <strong class=""><span> Rs. </span>0</strong>
+                    </li>
+                    <li>
+                      <em>tax</em>
+                      <strong class="price"><span>Rs.</span>0.0</strong>
+                    </li>
+                    <li class="shopping-total-price">
+                      <em>Total</em>
+                      <strong class="price"><span>Rs.</span>0.0</strong>
+                    </li>
+                  </ul>
+                </div>
+                
+              </div>
+              <button class="btn btn-default" type="submit">Continue shopping <i class="fa fa-shopping-cart"></i></button>
+              
+              <a class="btn btn-primary disabled" href="{% url 'checkout' %}">Checkout <i class="fa fa-ban"></i></a>
+            </div>
+          </div>
+
 
                 {% else %}
                 <div class="shopping-total">
@@ -555,13 +585,14 @@
                     </li>
                   </ul>
                 </div>
-                {% endif %}
+                
               </div>
               <button class="btn btn-default" type="submit">Continue shopping <i class="fa fa-shopping-cart"></i></button>
               
               <a class="btn btn-primary" href="{% url 'checkout' %}">Checkout <i class="fa fa-check"></i></a>
             </div>
           </div>
+          {% endif %}
           <!-- END CONTENT -->
         </div>
         <!-- END SIDEBAR & CONTENT -->

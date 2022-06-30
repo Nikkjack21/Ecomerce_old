@@ -48,6 +48,10 @@ class Account(AbstractBaseUser):
     username        = models.CharField(max_length=50, unique=True)
     email           = models.EmailField(max_length=100, unique=True)
     phone_number    = models.CharField(max_length=50)
+    referral_code   = models.CharField(max_length=50, null=True, blank=True)
+    ref_active      = models.BooleanField(default=False ,null = True)
+    code_reffered   = models.CharField(max_length=50, null=True, blank=True)
+ 
 
     #Required fields
 
@@ -57,6 +61,10 @@ class Account(AbstractBaseUser):
     is_staff        = models.BooleanField(default=False)
     is_active       = models.BooleanField(default=True)
     is_superadmin   = models.BooleanField(default=False)
+
+
+   
+
 
 
     USERNAME_FIELD      = 'username'
@@ -73,6 +81,21 @@ class Account(AbstractBaseUser):
 
     def has_module_perms(self, add_label):
         return True
+
+
+
+
+
+class Wallet(models.Model):
+    user = models.ForeignKey(Account,on_delete=models.CASCADE)
+    balance = models.FloatField( max_length=15, null = True, default= 0 )
+    is_applied = models.BooleanField(default=False)
+
+
+    def __str__(self):
+        return self.user.username
+
+
 
 
 

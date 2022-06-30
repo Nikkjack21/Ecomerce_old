@@ -56,7 +56,7 @@
 
 <!-- Body BEGIN -->
 <body class="ecommerce">
-  {% include "user/navbar.html" %}
+
     <!-- BEGIN STYLE CUSTOMIZER -->
     <div class="color-panel hidden-sm">
       <!-- <div class="color-mode-icons icon-color"></div> -->
@@ -322,60 +322,43 @@
       <div class="main">
         <div class="container">
           <ul class="breadcrumb">
-              <li><a href="index.html">Home</a></li>
+              <li><a href="{%url 'index'%}">Home</a></li>
               <li><a href="">Store</a></li>
               <li class="active">Men category</li>
           </ul>
           <!-- BEGIN SIDEBAR & CONTENT -->
           <div class="row margin-bottom-40">
             <!-- BEGIN SIDEBAR -->
-            <div class="sidebar col-md-3 col-sm-5">
-              <ul class="list-group margin-bottom-25 sidebar-menu">
-                <li class="list-group-item clearfix"><a href="shop-product-list.html"><i class="fa fa-angle-right"></i> Ladies</a></li>
-                <li class="list-group-item clearfix dropdown active">
-                  <a href="javascript:void(0);" class="collapsed">
+            <div class="sidebar col-md-3 col-sm-5"  >
+              
+              <ul class="list-group margin-bottom-25 sidebar-menu" >
+                {% for main in main_cate %}
+                <li class="list-group-item clearfix dropdown "  >
+                  <a href="{% url 'products_by_cat' main.id %}" class=" ">
                     <i class="fa fa-angle-right"></i>
-                    Mens
+                   {{main.name}}
                     
                   </a>
-                  <ul class="dropdown-menu" style="display:block;">
-                    <li class="list-group-item dropdown clearfix active">
-                      <a href="javascript:void(0);" class="collapsed"><i class="fa fa-angle-right"></i> Casual Shirts </a>
-                        <!-- <ul class="dropdown-menu" style="display:block;">
-                          <li class="list-group-item dropdown clearfix">
-                            <a href="javascript:void(0);"><i class="fa fa-angle-right"></i> Classic </a>
-                            <ul class="dropdown-menu">
-                              <li><a href="shop-product-list.html"><i class="fa fa-angle-right"></i> Classic 1</a></li>
-                              <li><a href="shop-product-list.html"><i class="fa fa-angle-right"></i> Classic 2</a></li>
-                            </ul>
-                          </li>
-                          <li class="list-group-item dropdown clearfix active">
-                            <a href="javascript:void(0);" class="collapsed"><i class="fa fa-angle-right"></i> Sport  </a>
-                            <ul class="dropdown-menu" style="display:block;">
-                              <li class="active"><a href="shop-product-list.html"><i class="fa fa-angle-right"></i> Sport 1</a></li>
-                              <li><a href="shop-product-list.html"><i class="fa fa-angle-right"></i> Sport 2</a></li>
-                            </ul>
-                          </li>
-                        </ul> -->
-                    </li>
-                    <li><a href="shop-product-list.html"><i class="fa fa-angle-right"></i> Trainers</a></li>
-                    <li><a href="shop-product-list.html"><i class="fa fa-angle-right"></i> Jeans</a></li>
-                    <li><a href="shop-product-list.html"><i class="fa fa-angle-right"></i> Chinos</a></li>
-                    <li><a href="shop-product-list.html"><i class="fa fa-angle-right"></i> T-Shirts</a></li>
+                  <ul class="dropdown-menu" style="display:none;">
+               <li class="list-group-item dropdown clearfix ">
+                      {% for sub in main.subcategory.all %}
+                      <a href="#" class=""><i class="fa fa-angle-right"></i> {{sub.category_name}} </a>
+                      {% endfor %}
+                    </li> 
+
                   </ul>
                 </li>
-                <li class="list-group-item clearfix"><a href="shop-product-list.html"><i class="fa fa-angle-right"></i> Kids</a></li>
-                <li class="list-group-item clearfix"><a href="shop-product-list.html"><i class="fa fa-angle-right"></i> Accessories</a></li>
-                <li class="list-group-item clearfix"><a href="shop-product-list.html"><i class="fa fa-angle-right"></i> Sports</a></li>
 
+                {% endfor %}
               </ul>
+            
   
               <div class="sidebar-filter margin-bottom-25">
                 <h2>Filter</h2>
                 <h3>Availability</h3>
                 <div class="checkbox-list">
-                  <label><input type="checkbox"> Not Available (3)</label>
-                  <label><input type="checkbox"> In Stock (26)</label>
+                  <label><input type="checkbox"> Not Available</label>
+                  <label><input type="checkbox"> In Stock </label>
                 </div>
   
                 <h3>Price</h3>
@@ -765,7 +748,7 @@
       <!--[if lt IE 9]>
       <script src="assets/plugins/respond.min.js"></script>  
       <![endif]-->
-      <script src="{% static 'assets/plugins/jquery.min.js' %}" type="text/javascript"></script>
+      <script src="{% static 'assets/plugins/jquery.min.js' %}" type="text/javascript"></script>  
       <script src="{% static 'assets/plugins/jquery-migrate.min.js' %}" type="text/javascript"></script>
       <script src="{% static 'assets/plugins/bootstrap/js/bootstrap.min.js' %}" type="text/javascript"></script>      
       <script src="{% static 'assets/corporate/scripts/back-to-top.js' %}" type="text/javascript"></script>

@@ -79,9 +79,12 @@ def payment(request):
 
 def place_order(request, total=0, quantity=0):
     current_user = request.user
-    cart   = Cart.objects.get(cart_id=_cart_id(request))
-    cart_itemss   = CartItem.objects.filter(cart=cart, is_active=True,)
-    
+    if request.user.is_authenticated:
+        cart_itemss   = CartItem.objects.filter(user=current_user, is_active=True,)
+    else:
+        cart   = Cart.objects.get(cart_id=_cart_id(request))
+        cart_itemss   = CartItem.objects.filter(cart=cart, is_active=True,)
+        
  
     
     global order_data

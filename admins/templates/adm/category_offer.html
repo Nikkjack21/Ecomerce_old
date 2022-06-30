@@ -22,25 +22,27 @@
                     </div>
                 </div>
                 <div class="navbar-nav w-100">
-                    <a href="{% url 'admin_home' %}" class="nav-item nav-link "><i class="fa fa-tachometer-alt me-2"></i>Dashboard</a>
+                    <a href="{% url 'admin_home' %}" class="nav-item nav-link active"><i class="fa fa-tachometer-alt me-2"></i>Dashboard</a>
                     <div class="nav-item dropdown">
-                        <a href="{% url 'details' %}" class="nav-link " ><i class="fa fa-laptop me-2"></i>Users </a>
+                        <a href=" {% url 'details' %}" class="nav-link " ><i class="fa fa-laptop me-2"></i>User Management</a>
                        
-                    </div>
-                    <a href="{% url 'category' %}" class="nav-item nav-link "><i class="fa fa-table me-2"></i>Categories</a>
-                    <a href="{% url 'product_view' %}" class="nav-item nav-link "><i class="far fa-file-alt me-2"></i>Products</a>
+                    </div>                    
                     
+                    <a href="{% url 'category' %}" class="nav-item nav-link"><i class="fa fa-table me-2"></i>Categories</a>
+
+                    <a href=" {% url 'product_view' %} " class="nav-item nav-link"><i class="far fa-file-alt me-2"></i>Products</a>
                     <a href="{% url 'order_list' %}" class="nav-item nav-link"><i class="fa fa-keyboard me-2"></i>Orders</a>
-                    <a href="{% url 'sales_report' %}" class="nav-item nav-link"><i class="fa fa-keyboard me-2"></i>Sales Report</a>
-                            
+                    <a href="{% url 'sales_report' %}" class="nav-item nav-link "><i class="fa fa-keyboard me-2"></i>Sales Report</a>
+
+                   
                     <div class="nav-item dropdown">
-                        <a href="#" class="nav-link dropdown-toggle active" data-bs-toggle="dropdown"><i class="far fa-file-alt "></i>Offer management</a>
+                        <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown"><i class="far fa-file-alt "></i>Offer management</a>
                         <div class="dropdown-menu  bg-transparent border-0">
-                            <a href="/product_offer/" class="dropdown-item">Product Offer</a>
-         
+                            <a href="{% url 'product_offer' %}" class="dropdown-item">Product Offer</a>
+                            <a href="{% url 'cat_offer' %}" class="dropdown-item">Category Offer</a>
+                            
                         </div>
                     </div>
-                   
                 </div>
             </nav>
         </div>
@@ -88,6 +90,7 @@
                                         <tr>
                                             <th scope="col">Id</th>
                                             <th scope="col"> Category Name</th>
+                                            <th scope="col">  Images</th>
                                             <th scope="col"> valid from </th>
                                             <th scope="col"> valid to</th>
                                             <th scope="col">discount</th>
@@ -103,6 +106,9 @@
                                         <tr>
                                             <th scope="row">{{off.id}}</th>
                                             <td>{{off.category.category_name}}</td>
+                                            <td>
+                                                <img src="{{off.category.cat_image.url}}" height="60ch" width="60ch" alt="">
+                                            </td>
                                             <td>{{off.valid_from}}</td>
                                             <td>{{off.valid_to}}</td>
                                             <td>{{off.discount}} %</td>

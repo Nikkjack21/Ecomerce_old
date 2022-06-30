@@ -36,17 +36,27 @@
                     </div>
                 </div>
                 <div class="navbar-nav w-100">
-                    <a href="adminhome" class="nav-item nav-link "><i class="fa fa-tachometer-alt me-2"></i>Dashboard</a>
+                    <a href="{% url 'admin_home' %}" class="nav-item nav-link active"><i class="fa fa-tachometer-alt me-2"></i>Dashboard</a>
                     <div class="nav-item dropdown">
-                        <a href="user_details" class="nav-link " ><i class="fa fa-laptop me-2"></i>Users </a>
+                        <a href=" {% url 'details' %}" class="nav-link " ><i class="fa fa-laptop me-2"></i>User Management</a>
                        
-                    </div>
-                    <a href="category" class="nav-item nav-link active"><i class="fa fa-table me-2"></i>Categories</a>
-                    <a href="product_view" class="nav-item nav-link"><i class="far fa-file-alt me-2"></i>Products</a>
+                    </div>                    
                     
-                    <a href="form.html" class="nav-item nav-link"><i class="fa fa-keyboard me-2"></i>Forms</a>
-                    <a href="chart.html" class="nav-item nav-link"><i class="fa fa-chart-bar me-2"></i>Charts</a>
+                    <a href="{% url 'category' %}" class="nav-item nav-link"><i class="fa fa-table me-2"></i>Categories</a>
+
+                    <a href=" {% url 'product_view' %} " class="nav-item nav-link"><i class="far fa-file-alt me-2"></i>Products</a>
+                    <a href="{% url 'order_list' %}" class="nav-item nav-link"><i class="fa fa-keyboard me-2"></i>Orders</a>
+                    <a href="{% url 'sales_report' %}" class="nav-item nav-link "><i class="fa fa-keyboard me-2"></i>Sales Report</a>
+
                    
+                    <div class="nav-item dropdown">
+                        <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown"><i class="far fa-file-alt "></i>Offer management</a>
+                        <div class="dropdown-menu  bg-transparent border-0">
+                            <a href="{% url 'product_offer' %}" class="dropdown-item">Product Offer</a>
+                            <a href="{% url 'cat_offer' %}" class="dropdown-item">Category Offer</a>
+                            
+                        </div>
+                    </div>
                 </div>
             </nav>
         </div>
@@ -122,14 +132,12 @@
                                     <img  src="" alt="Image Preview" class="image_preview"> 
                                     <span class="image-preview__default-text"></span>
                                  </div>
-                            <div  class="image-preview  mx-2" id="imagePreview"  > 
-                                    <img  src="" alt="Image Preview" class="image_preview"> 
-                                    <span class="image-preview__default-text"></span>
-                                 </div>
+                            <div  class=""  > 
+                                <button class="btn btn-primary my-4" type="submit">Submit</button>
                                 
-                            </div>
+                            </div> 
 
-                            <button class="btn btn-primary my-4" type="submit">Submit</button>
+                            
                             </form>
                         </div>
                     </div></center>
@@ -141,7 +149,7 @@
             </div>
      </div>
 
-
+     <script defer src="https://cdn.crop.guide/loader/l.js?c=XXTQBT"></script>
 
 
 

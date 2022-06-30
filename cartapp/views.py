@@ -1,12 +1,12 @@
 
-from django.http import HttpResponse
+from django.http import HttpResponse, JsonResponse
 from django.shortcuts import get_object_or_404, render, redirect
 from accounts.models import UserProfile
 from store.models import Product
 from category.models import Category
 from .models import Cart, CartItem, ProductOffer, CategoryOffer
 from django.core.exceptions import ObjectDoesNotExist
-
+from django.contrib.auth.decorators import login_required
 
 # Create your views here.
 
@@ -40,6 +40,7 @@ def _cart_id(request):
 
 
 def add_cart(request, product_id):
+    user = request.user
     product         = Product.objects.get(id=product_id)
     try:
         cart        = Cart.objects.get(cart_id=_cart_id(request))
@@ -49,42 +50,64 @@ def add_cart(request, product_id):
         )
     
     cart.save()
-
-    try:
-        cart_item   = CartItem.objects.get(product=product, cart=cart, user=request.user)
-        cart_item.quantity += 1   
-        cart_item.save()
-    except CartItem.DoesNotExist:
-        cart_item   = CartItem.objects.create(
-            user   = request.user,
-            product  = product,
-            quantity  = 1,
-            cart  = cart
-        )
-        cart_item.save()
-    return redirect('cart')
+    if request.user.is_authenticated:
+        try:
+            cart_item   = CartItem.objects.get(product=product, user=request.user)
+            cart_item.quantity += 1   
+            cart_item.save()
+        except CartItem.DoesNotExist:
+            cart_item   = CartItem.objects.create(
+                user=request.user,
+                product  = product,
+                quantity  = 1,
+                cart  = cart
+            )
+            cart_item.save()
+        return redirect('cart')
+    else:     
+        try:
+            cart_item   = CartItem.objects.get(product=product, cart=cart)
+            cart_item.quantity += 1   
+            cart_item.save()
+        except CartItem.DoesNotExist:
+            cart_item   = CartItem.objects.create(
+            
+                product  = product,
+                quantity  = 1,
+                cart  = cart
+            )
+            cart_item.save()
+        return redirect('cart')
 
 
 def cart(request, total=0, quantity=0, cart_items=None):
-    
-    tax=0
-    grand_total=0
+    products  = Product.objects.all().filter(is_available=True)
     try:
-        cart   = Cart.objects.get(cart_id=_cart_id(request))
-        cart_items   = CartItem.objects.filter(cart=cart, is_active=True)
+        print('ENTERING TRY BLOCCK')
+        tax=0
+        grand_total=0
+        if request.user.is_authenticated:
+            print("USER IS REQUESTED")
+            cart_items   = CartItem.objects.filter(user=request.user, is_active=True).order_by('id')
+        else:
+            print("USER IS NOT REQUESTED")          
+            cart   = Cart.objects.get(cart_id=_cart_id(request))
+            cart_items   = CartItem.objects.filter(cart=cart, is_active=True)
         for cart_item in cart_items:
             new_price = offer_check_function(cart_item)
             total += (new_price * cart_item.quantity)
-            # total += (cart_item.product.price * cart_item.quantity)
             quantity += cart_item.quantity
         tax = (2 * total)/100
         grand_total  = total + tax
+        
     except ObjectDoesNotExist:
-      pass
-    products  = Product.objects.all().filter(is_available=True)
+        pass
+    
 
     context ={
+      
         'products': products,
+       
         'total': total,
         'quantity': quantity,
        
@@ -101,7 +124,11 @@ def cart(request, total=0, quantity=0, cart_items=None):
 def remove_cart(request, product_id):
     cart     = Cart.objects.get(cart_id=_cart_id(request))
     product  = get_object_or_404(Product, id=product_id)
-    cart_item = CartItem.objects.get(product=product, cart=cart)
+    if request.user.is_authenticated:
+        cart_item = CartItem.objects.get(product=product, user=request.user) 
+    else:      
+        cart     = Cart.objects.get(cart_id=_cart_id(request))
+        cart_item = CartItem.objects.get(product=product, cart=cart)
     
     if cart_item.quantity > 1:
         cart_item.quantity -= 1
@@ -114,19 +141,30 @@ def remove_cart(request, product_id):
 def remove_cart_item(request, product_id):
     cart  = Cart.objects.get(cart_id=_cart_id(request))
     product  = get_object_or_404(Product, id=product_id)
-    cart_item = CartItem.objects.get(product=product, cart=cart)
+    if request.user.is_authenticated:
+        cart_item = CartItem.objects.get(product=product, user=request.user) 
+    else:    
+        cart  = Cart.objects.get(cart_id=_cart_id(request))
+        cart_item = CartItem.objects.get(product=product, cart=cart)
     cart_item.delete()
     return redirect('cart')
 
 
+    
+
+@login_required(login_url='signin')
 def checkout(request, total=0, quantity=0, cart_items=None):
     tax=0
     grand_total=0
-    profile  = UserProfile.objects.filter(user=request.user)
+    profile  = UserProfile.objects.filter(user=request.user).order_by('id')
     print(profile)
+
     try:
-        cart   = Cart.objects.get(cart_id=_cart_id(request))
-        cart_items   = CartItem.objects.filter(cart=cart, is_active=True)
+        if request.user.is_authenticated:
+            cart_items   = CartItem.objects.filter(user=request.user, is_active=True)
+        else:
+            cart   = Cart.objects.get(cart_id=_cart_id(request))
+            cart_items   = CartItem.objects.filter(cart=cart, is_active=True)
         for cart_item in cart_items:
             new_price = offer_check_function(cart_item)
             print(new_price)
@@ -139,7 +177,7 @@ def checkout(request, total=0, quantity=0, cart_items=None):
        pass
        
     context ={
-     
+        
         'total': total,
         'quantity': quantity,
         'cart_items': cart_items,
@@ -152,6 +190,21 @@ def checkout(request, total=0, quantity=0, cart_items=None):
 
 
     
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 def sample(request):
     return render(request, 'check/check_out_test.html')

@@ -11,7 +11,7 @@
           <li class="active">Checkout</li>
       </ul>
       <!-- BEGIN SIDEBAR & CONTENT -->
-      <div class="row margin-bottom-40">
+      <div class="col margin-bottom-40">
         <!-- BEGIN CONTENT -->
 
 <!-----SLECT ADDRESS-------->
@@ -19,17 +19,17 @@
  <style>
           
 .cool {
-  max-width: 900px;
+  width: 100%;
   margin: 0 auto;
+  
+
 }
 
 
-/**
-  Component
-**/
-
 .hot {
     width: 100%;
+   
+
 }
 
 .card-input-element {
@@ -50,29 +50,33 @@
 }
 
 
-        </style>
+  </style>
 
       <form action="{% url 'place_order' %}" method="POST">
           {% csrf_token %}
-        <div class="cool">
+
+    
+        <div class="cool  " >
   
           <h1>Select address</h1>
           
-          <div class="grid-container" >
+          <div class="grid" >
             
-              <div class="col-md-4 ">
+              <div class="col-md-5 d-flex " style="width: 80%;">
                 {% for adr in profile %}
                
-                <label class="hot">
+                <label class="hot" >
                  
-                  <input type="radio" name="selection" value="{{adr.id}}" selected checked class="card-input-element" />
+                  <input type="radio" name="selection" value="{{adr.id}}" selected checked class="card-input-element " />
         
                     <div class="card card-default card-input">
-                      <div class="card-header">Product A</div>
+                      <div class="card-header">{{adr.user.first_name}} {{adr.user.last_name}}</div>
                       <div class="card-body">
+                        <p> {{adr.user.phone_number}}</p>
                         <p> {{adr.address_line_1}}</p>
-                        <p> {{adr.address_line_1}}</p>
-                        <p> Product specific content</p>
+                        <p> {{adr.address_line_2}}, {{adr.city}}, {{adr.state}}</p>
+                        <p>{{adr.country}}</p>
+                        
                       </div>
                     </div>
                    
@@ -82,8 +86,12 @@
               </div>
           </div>
           
-        </div>
+        
+        
 
+      </div>
+
+ 
 
 
       {% comment %} <div class="grid-container" >

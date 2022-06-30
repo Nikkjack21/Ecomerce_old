@@ -1,5 +1,8 @@
 from .models import MainCategory
+from store.models import Product
 
 def menu_links(request):
-    links = MainCategory.objects.all
-    return dict(links=links)    
+    main_cat      = MainCategory.objects.all()
+    products = Product.objects.all().filter(is_available=True)
+
+    return{'main_cat': main_cat, 'products': products}

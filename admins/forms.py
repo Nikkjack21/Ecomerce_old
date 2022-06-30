@@ -4,11 +4,13 @@ from dataclasses import fields
 import datetime
 
 from orders.models import Order
-
+from django.core import validators
 
 class DateTimeLocal(forms.DateTimeInput):
     input_type = 'datetime-local'
     color ='Red'
+
+
 
 class ProductOfferForm(forms.ModelForm):
     class Meta:
@@ -19,6 +21,17 @@ class ProductOfferForm(forms.ModelForm):
             'valid_to': DateTimeLocal(),
 
         }
+
+    def clean_discount(self):
+        discount     = self.cleaned_data['discount']
+
+        if discount > 80:
+            raise forms.ValidationError('Offer cannot exceed 80%')
+        return discount
+
+
+
+
 class CategoryOfferForm(forms.ModelForm):
     class Meta:
         model = CategoryOffer
@@ -27,6 +40,12 @@ class CategoryOfferForm(forms.ModelForm):
             'valid_from': DateTimeLocal(),
             'valid_to': DateTimeLocal(),
         }
+    def clean_discount(self):
+        discount     = self.cleaned_data['discount']
+
+        if discount > 80:
+            raise forms.ValidationError('Offer cannot exceed 80%')
+        return discount
 
 
 

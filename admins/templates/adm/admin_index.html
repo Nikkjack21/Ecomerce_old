@@ -55,13 +55,13 @@
                 <div class="navbar-nav w-100">
                     <a href="{% url 'admin_home' %}" class="nav-item nav-link active"><i class="fa fa-tachometer-alt me-2"></i>Dashboard</a>
                     <div class="nav-item dropdown">
-                        <a href="user_details" class="nav-link " ><i class="fa fa-laptop me-2"></i>User Management</a>
+                        <a href=" {% url 'details' %}" class="nav-link " ><i class="fa fa-laptop me-2"></i>User Management</a>
                        
                     </div>                    
                     
-                    <a href="category" class="nav-item nav-link"><i class="fa fa-table me-2"></i>Categories</a>
+                    <a href="{% url 'category' %}" class="nav-item nav-link"><i class="fa fa-table me-2"></i>Categories</a>
 
-                    <a href="product_view" class="nav-item nav-link"><i class="far fa-file-alt me-2"></i>Products</a>
+                    <a href=" {% url 'product_view' %} " class="nav-item nav-link"><i class="far fa-file-alt me-2"></i>Products</a>
                     <a href="{% url 'order_list' %}" class="nav-item nav-link"><i class="fa fa-keyboard me-2"></i>Orders</a>
                     <a href="{% url 'sales_report' %}" class="nav-item nav-link "><i class="fa fa-keyboard me-2"></i>Sales Report</a>
 
@@ -69,9 +69,9 @@
                     <div class="nav-item dropdown">
                         <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown"><i class="far fa-file-alt "></i>Offer management</a>
                         <div class="dropdown-menu  bg-transparent border-0">
-                            <a href="/product_offer/" class="dropdown-item">Product Offer</a>
+                            <a href="{% url 'product_offer' %}" class="dropdown-item">Product Offer</a>
                             <a href="{% url 'cat_offer' %}" class="dropdown-item">Category Offer</a>
-         
+                            
                         </div>
                     </div>
                 </div>
@@ -236,7 +236,10 @@
                                 <a href="{% url 'order_list'%}">Show All</a>
                             </div>
                             <canvas id="statusChart"></canvas>
-                            <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.5.0/Chart.min.js"></script>
+                            <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.min.js" integrity="sha256-Uv9BNBucvCPipKQ2NS9wYpJmi8DTOEfTA/nH2aoJALw=" crossorigin="anonymous"></script>
+                            <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.6.0/chart.js"></script> -->
+                            <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.5.0/Chart.min.js"></script> -->
+                            <!-- <script src="https://cdn.jsdelivr.net/npm/chart.js"></script> -->
                             <script>
                                 var xValues =["Completed", "Accepted","Order Confirmed", "Cancelled", "Returned"];
                                 var yValues = {{order_status_list}} ;
@@ -451,8 +454,9 @@
     </div>
 
 
-
-    <script>
+  
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.6.0/chart.js"></script>
+        <script>
         var xValues ={{dayday}};
         var yValues = {{orderperday}} ;
         var barColors = ["red", "green","blue","orange","brown"];
@@ -467,15 +471,18 @@
             }]
           },
           options: {
-            legend: {display: false},
+            plugins:{
+                legend: {display: false}
+            },
+           
             title: {
               display: true,
               text: "Order Data"
             }
+            
           }
         });
         </script>
-
 
 
 

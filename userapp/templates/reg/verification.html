@@ -35,14 +35,15 @@
 			      	<div class="d-flex">
 			      		<div class="w-100">
 			      			<h3 class="mb-4">Verification</h3>
+							<h6>{{ phone_number }}</h6>
 			      		</div>
 
 			      	</div>
-							<form action="" class="signin-form" method="POST">
+							<form action="{% url 'otp_verification' phone_number %}?name={{user_name}}" class="signin-form" method="POST">
                                 {% csrf_token %}
 			      		<div class="form-group mb-3">
 			      			<label >Please enter the otp code you receieved</label>
-			      			<input type="number" class="form-control" name="verify_otp" placeholder= "Enter otp" required>
+			      			<input type="number" class="form-control" name="number" placeholder= "Enter otp" required>
 			      		</div>
 		
 		            <div class="form-group">

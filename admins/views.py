@@ -120,7 +120,7 @@ def admin_out(request):
 #USER MANAGEMENT DETAILS BEGINS HERE------------>
 
 def users_details(request):
-    users     = Account.objects.all()
+    users     = Account.objects.all().order_by('id')
     context   =  {
         'users': users
     }
@@ -143,6 +143,7 @@ def action_user(request, id):
 #CATEGORY MANAGEMENT DETAILS BEGINS HERE------------>
 
 def cate_view(request):
+
     cate = Category.objects.all()
     context={
         'cate': cate
@@ -151,6 +152,7 @@ def cate_view(request):
 
 
 def cate_add(request):
+
     new = Category()
     if request.method == 'POST':
       
@@ -334,18 +336,6 @@ def change_status(request,id):
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
 def offer_product(request):
     off_pro  = ProductOffer.objects.all()
 
@@ -373,9 +363,10 @@ def edit_pro_offer(request,id):
     form = ProductOfferForm(instance=offer)
     if request.method =="POST":
         form = ProductOfferForm(request.POST,instance=offer)
-        form.save()
-        messages.success(request,'Product offer updated successfully')
-        return redirect(offer_product)
+        if form.is_valid():
+            form.save()
+            messages.success(request,'Product offer updated successfully')
+            return redirect('product_offer')
     return render (request,'adm/edit_product_offer.html',{'form':form,'offer':offer})
 
 
@@ -411,9 +402,10 @@ def edit_cat_offer(request,id):
     form = CategoryOfferForm(instance=offer)
     if request.method =="POST":
         form = CategoryOfferForm(request.POST,instance=offer)
-        form.save()
-        messages.success(request,'Category offer updated successfully')
-        return redirect(offer_category)
+        if form.is_valid():
+            form.save()
+            messages.success(request,'Category offer updated successfully')
+            return redirect(offer_category)
     return render (request,'adm/edit_cat_offer.html',{'form':form,'offer':offer})
 
 
