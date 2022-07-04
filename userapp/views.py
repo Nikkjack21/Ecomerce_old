@@ -95,7 +95,7 @@ def otp(request):
         phone_number = request.POST['phone_number']
         if mobile == phone_number:
             account_sid     = 'AC29ac10e058d302306bbbd63a523a0f15'
-            auth_token      = 'c9d3fe5697fe29f111d22a49e8e88d72'
+            auth_token      = 'af9cd927f3840a8454f7e81465fa9cb5'
 
             client      = Client(account_sid, auth_token)
             global otp
@@ -202,12 +202,9 @@ def phone_verification(request):
         print("1")
         count =0
         phone_number = request.POST['phone_number']
-
+        phone_no="+91" + phone_number
         for i in phone_number:
             count=count+1
-        
-        c="+91" + phone_number
-        
         
         if count == 10 :
             print("0000")
@@ -220,16 +217,13 @@ def phone_verification(request):
                 # Your Account SID twilio
                 account_sid = "AC29ac10e058d302306bbbd63a523a0f15"
                 # Your Auth Token twilio
-                auth_token  = "c9d3fe5697fe29f111d22a49e8e88d72"
+                auth_token  = "af9cd927f3840a8454f7e81465fa9cb5"
 
                 client = Client(account_sid, auth_token)
-                global otps
-                otps = str(random.randint(1000,9999))
-                message = client.messages.create(
-                    to="+91" + phone_number , 
-                    
-                    from_="+1 850 789 7381",
-                    body="Hello there! Your Login OTP is "+otps)
+                verification = client.verify \
+                        .services("VA38cc8734ac2db4a918b56a6bd98030c7") \
+                        .verifications \
+                        .create(to=phone_no,channel='sms')
                 print("1234")
                 
                 context = {
@@ -270,24 +264,26 @@ def otp_verification(request,phone_number):
     user_name = request.GET.get('name')
     print(phone_number)
     print(user_name)
+    phone_no = "+91" + str(phone_number)
 
     if request.method=='POST':
-   
-        otp3 =  request.POST['number']
-        print(otp3)
-       
-       
-        if otp3 == otps :
-            user = Account.objects.filter(username = user_name)
-            use = Account.objects.get(username = user_name)
-            email = use.email
-            first = use.first_name
-            last = use.last_name
+
+        otp_input =  request.POST['number']
+        account_sid = "AC29ac10e058d302306bbbd63a523a0f15"
+        auth_token = "af9cd927f3840a8454f7e81465fa9cb5"
+        client = Client(account_sid, auth_token)
+        verification_check = client.verify \
+                                .services("VA38cc8734ac2db4a918b56a6bd98030c7") \
+                                .verification_checks \
+                                .create(to= phone_no, code= otp_input)
            
-            referel = last+first+email
-            user.update(phone_number=phone_number, referral_code= referel)
-            print(user)
-            print("refferal code created")
+        
+        if verification_check.status == "approved":
+            messages.success(request,"OTP verified successfully.")
+            user = Account.objects.get(email=user_name)
+            user.is_active = True   
+            user.Phone_number = phone_number        
+            user.save()          
             messages.success(request,"registered successfully")
             return redirect ('signin')
         else:

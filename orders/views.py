@@ -2,7 +2,7 @@ from operator import gt
 from django.http import HttpResponse, JsonResponse
 from django.shortcuts import render, redirect
 from django.http import HttpResponse
-from cartapp.models import CartItem, Cart, Coupon
+from cartapp.models import CartItem, Cart, Coupon, CouponUsedUser
 from django.core.exceptions import ObjectDoesNotExist
 from .forms import Orderform
 from store.models import Product
@@ -65,6 +65,17 @@ def payment(request):
 
 
     CartItem.objects.filter(user=request.user).delete()
+    if request.session.get('coupon_id'):
+        coupon_id = request.session.get('coupon_id')
+        del request.session['coupon_id']
+        coupon = Coupon.objects.get(id=coupon_id)
+        coupon_used = CouponUsedUser.objects.create(
+        coupon = coupon,
+        user=request.user,
+                    )
+        coupon_used.save()
+    else:
+        None
     data ={
         'order_number': order.order_number,
         'transID': payment.payment_id,
@@ -135,6 +146,26 @@ def place_order(request, total=0, quantity=0):
 
                 order_data      = Order.objects.get(user=current_user, is_ordered=False, order_number=order_number)
                 adrs            = Address.objects.filter(user=request.user)
+                if request.session:
+                    coupon_id = request.session.get('coupon_id')
+                    print(coupon_id)
+                    try:
+                        coupon = Coupon.objects.get(id=coupon_id)
+                        deduction = coupon.discount_amount(total)
+                        final_price = total-deduction
+                        print(final_price)
+                        grand_total = tax + final_price
+                        print(grand_total)
+                        print('SHOWNG APPLIED COUPON GRAND TOTAL')
+                        
+                    except:
+                        pass
+            
+                else:
+            
+
+
+                    grand_total = grand_total
                 
                 context={
                     'order_data':order_data,
@@ -144,7 +175,9 @@ def place_order(request, total=0, quantity=0):
                     'tax': tax,
                     'grand_total': grand_total,
                     'adrs': adrs,
-
+                    'final_price': final_price,
+                    'deduction':deduction,
+                    'coupon': coupon,
                 }
                 print(order_data.phone)
 
@@ -181,23 +214,27 @@ def place_order(request, total=0, quantity=0):
 
             order_data      = Order.objects.get(user=request.user, is_ordered=False, order_number=order_number)
             adrs            = Address.objects.filter(user=request.user)
-
             if request.session:
                 coupon_id = request.session.get('coupon_id')
                 print(coupon_id)
-            try:
-                coupon = Coupon.objects.get(id=coupon_id)
-                deduction = coupon.discount_amount(total)
-                total = total-deduction
-                
-            except:
-                pass
+                try:
+                    coupon = Coupon.objects.get(id=coupon_id)
+                    deduction = coupon.discount_amount(total)
+                    final_price = total-deduction
+                    print(final_price)
+                    grand_total = tax + final_price
+                    print(grand_total)
+                    print('SHOWNG APPLIED COUPON GRAND TOTAL')
+                    
+                except:
+                    pass
         
             else:
         
 
 
-                total = total
+                grand_total = grand_total
+
 
 
         # authorize razorpay client with API Keys.
@@ -228,6 +265,9 @@ def place_order(request, total=0, quantity=0):
                 'razorpay_merchant_key' : settings.RAZORPAY_KEY_ID,
                 'razorpay_amount' : amount,
                 'currency' : currency ,
+                'final_price': final_price,
+                'deduction':deduction,
+                'coupon': coupon,
 
             }
             razor_model =RazorPay()
@@ -255,6 +295,7 @@ def order_complete(request):
     
     order_number            = request.GET.get('order_number')
     transID                 = request.GET.get('payment_id')
+
    
     try:
         order     = Order.objects.get(order_number = order_number, is_ordered = True)
@@ -414,12 +455,13 @@ def razor_success(request):
         'transID':transID
     }
 
-    return render(request,'orders/success.html', context)
+    return render(request,'orders/razor_success.html', context)
 
 
 
-def buy_now_payment(request):
-    return render(request, 'buy/buy_now_payments.html')
+# def buy_now_payment(request,id):
+#     cart_items   = Product.objects.get(id=id)
+#     return render(request, 'buy/buy_now_payments.html', {'cart_items':cart_items})
 
 
 def buy_now_place_order(request, id):
@@ -466,7 +508,7 @@ def buy_now_place_order(request, id):
 
                 context={
                         'order_data':order_data,
-                        'cart_itemss': cart_itemss,
+                        'cart_items': cart_itemss,
                         'total':total,
                    
                         'tax': tax,
@@ -526,7 +568,7 @@ def buy_now_place_order(request, id):
 
             context={
                 'order_data':order_data,
-                'cart_itemss': cart_itemss,
+                'cart_items': cart_itemss,
                 'total':total,
                 'tax': tax,
                 'grand_total': grand_total,
@@ -560,7 +602,7 @@ def buy_now_place_order(request, id):
 
 
 
-def buy_paypal(request):
+def buy_paypal(request,id):
     body            = json.loads(request.body)
     order           = Order.objects.get(user=request.user, is_ordered=False, order_number=body['orderID'])
     print(order)
@@ -580,24 +622,30 @@ def buy_paypal(request):
     order.save()    
 
 
-    cart_item = Product.objects.filter(user=request.user)
-    
+    # cart_item = Product.objects.filter(user=request.user)
+    item = Product.objects.get(id=id)
+    order_id = str(body['orderID'])
+    print(order_id)
+    #taking order_id to show the invoice
+    request.session['order_id']=order_id
+    order_data = Order.objects.get(order_number = order_id)
+
+    order_data.payment=payment
+    order_data.save()
     
     #taking order_id to show the invoice
 
+
     
-   
-    for item in cart_item:
-       
-        OrderProduct.objects.create(
-        order = order,
-        product = item.product,
-        user = request.user,
-        quantity = item.quantity,
-        product_price = item.product.price,
-        payment = payment,
-        ordered = True,
-        )
+    OrderProduct.objects.create(
+    order = order,
+    product = item,
+    user = request.user,
+    quantity = 1,
+    product_price = item.price,
+    payment = payment,
+    ordered = True,
+    )
     #decrease the product quantity from product
     orderproduct = Product.objects.filter(id=item.product_id).first()
     orderproduct.stock = orderproduct.stock-item.quantity
@@ -605,18 +653,18 @@ def buy_paypal(request):
 
 
 
-    CartItem.objects.filter(user=request.user).delete()
     data ={
         'order_number': order.order_number,
         'transID': payment.payment_id,
+        
     }
     return JsonResponse(data)
 
 
 
 @csrf_exempt
-def buy_razor_success(request):
-    print('Entering razor Viewwwwwww')
+def buy_razor_success(request,id):
+    print('Entering razor buy Now Viewwwwwww')
     transID = request.POST.get('razorpay_payment_id')
     razorpay_order_id = request.POST.get('razorpay_order_id')
     signature = request.POST.get('razorpay_signature')
@@ -639,35 +687,33 @@ def buy_razor_success(request):
     order.is_ordered = True
     order.save()
 
-    cart_item = Product.objects.filter(user=current_user)
+    item = Product.objects.get(id=id)
     
     
     # Invoice Generating by using order_id
 
     
-   
-    for item in cart_item:
-       
-        OrderProduct.objects.create(
-        order = order,
-        product = item.product,
-        user = current_user,
-        quantity = item.quantity,
-        product_price = item.product.price,
-        payment = payment,
-        ordered = True,
-        )
+    
+    OrderProduct.objects.create(
+    order = order,
+    product = item.product,
+    user = current_user,
+    quantity = 1,
+    product_price = item.product.price,
+    payment = payment,
+    ordered = True,
+    )
 
-        #decreasing products from stock after order
+    #decreasing products from stock after order
 
-        orderproduct = Product.objects.filter(id=item.product_id).first()
-        orderproduct.stock = orderproduct.stock-item.quantity
-        orderproduct.save()
+    orderproduct = Product.objects.filter(id=item.id).first()
+    orderproduct.stock = orderproduct.stock-1
+    orderproduct.save()
 
-        #deleting Cart items after order
+    #deleting Cart items after order
 
 
-        CartItem.objects.filter(user=current_user).delete()
+     
 
 
     order = Order.objects.get(order_number = razor )
@@ -679,7 +725,7 @@ def buy_razor_success(request):
         'transID':transID
     }
 
-    return render(request,'orders/success.html', context)
+    return render(request,'buy/razor_success_buy.html', context)
 
 
 
@@ -690,7 +736,6 @@ def buy_cash_on_delivery(request,id,order_number):
     total =0
     quantity =1
     current_user = request.user
-    cart_item = Product.objects.get(id=id)
     order= Order.objects.get(order_number=order_number)
     print(order)
 
@@ -708,7 +753,7 @@ def buy_cash_on_delivery(request,id,order_number):
     order.is_ordered  = True
     order.save()
 
-
+    item  = Product.objects.get(id=id)
     
     
     #taking order_id to show the invoice
@@ -717,17 +762,17 @@ def buy_cash_on_delivery(request,id,order_number):
     
     OrderProduct.objects.create(
     order = order,
-    product = cart_item,
+    product = item,
     user = current_user,
-    quantity = quantity,
-    product_price = cart_item.price,
+    quantity = 1,
+    product_price = item.price,
     payment = payment,
     ordered = True,
     )
 
 
     #decrease the product quantity from product
-    orderproduct = Product.objects.get(id=cart_item.product_id).first()
+    orderproduct = Product.objects.filter(id=item.id).first()
     orderproduct.stock = orderproduct.stock-quantity
     orderproduct.save()
 
@@ -739,7 +784,7 @@ def buy_cash_on_delivery(request,id,order_number):
         'order':order,
         'order_product':order_product,
         'transID':transID,
-        'cart_items': cart_item,
+        'cart_items': item,
         'total': total,
     }
 
@@ -749,5 +794,22 @@ def buy_cash_on_delivery(request,id,order_number):
 
 
 
-def invoice_pdf(request):
-    pass
+def paypal_success(request):
+    order_number            = request.GET.get('order_number')
+    transID                 = request.GET.get('payment_id')
+   
+    try:
+        order     = Order.objects.get(order_number = order_number, is_ordered = True)
+        ordered_products    = OrderProduct.objects.filter(order_id = order.id)
+        payment   = Payment.objects.get(payment_id = transID)
+        context = {
+            'order': order,
+            'order_number': order_number,
+            'transID':payment.payment_id,
+            'payment': payment,
+            'ordered_products': ordered_products,
+
+        }
+        return render(request, 'buy/paypal_success.html', context)
+    except (Payment.DoesNotExist, Order.DoesNotExist):
+        return redirect('index')

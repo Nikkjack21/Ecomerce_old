@@ -1,4 +1,4 @@
-{% extends 'orders/base.html' %}
+{% extends 'buy/base.html' %}
 
 
 {% load mathfilters %}
@@ -69,14 +69,13 @@
                                                 </tr>
                                             </thead>
                                             <tbody>
-                                            
+                                         
                                                 <tr>
-                                                    <td>{{order_product.product_name}}</td>
-                                                    <td class="text-center">{{order_product.quantity}}</td>
-                                                    <td class="text-center">&#8377; {{order_product.price}}</td>
+                                                    <td>{{cart_items.product_name}}</td>
+                                                    <td class="text-center">1</td>
+                                                    <td class="text-center">&#8377; {{cart_items.price}}</td>
                                                 </tr>
                                                 
-                            
                                             </tbody>
                                             <tfoot>
                                                 <tr>

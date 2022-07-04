@@ -26,6 +26,9 @@ def offer_check_function(item):
     if ProductOffer.objects.filter(product=product,active=True).exists():
         if product.pro_offer:
             off_total = product.price - product.price*product.pro_offer.discount/100
+    elif CategoryOffer.objects.filter(category=item.product.category).exists():
+           if item.product.category.cat_offer:
+               off_total = product.price - product.price*item.product.category.cat_offer.discount/100
     else:
         off_total = product.price
         print(off_total)
@@ -158,8 +161,8 @@ def remove_cart_item(request, product_id):
     
 
 @login_required(login_url='signin')
-def checkout(request, total=0, quantity=0, cart_items=None):
-
+def checkout(request, total=0, quantity=0, cart_items=None, coupon=None, final_price=0,deduction =0):
+    
     tax=0
     grand_total=0
     profile  = Address.objects.filter(user=request.user).order_by('id')
@@ -184,19 +187,21 @@ def checkout(request, total=0, quantity=0, cart_items=None):
     except:
        pass
     coupon_apply_form = CouponApplyForm()
-   
     if request.session.get('coupon_id'):
         coupon_id = request.session.get('coupon_id')
-        print(coupon_id)
+        print(coupon_id)            
+
         try:
             coupon = Coupon.objects.get(id=coupon_id)
             if CouponUsedUser.objects.filter(coupon=coupon,user=request.user).exists():
                 print('Coupon already used')
-                final_price = grand_total
+                final_price = total
                 messages.successs(request,'Coupon already used')
+              
             else:
-                deduction = coupon.discount_amount(grand_total)
-                final_price = grand_total-deduction
+                deduction = coupon.discount_amount(total)
+                final_price = total-deduction
+                grand_total = tax + final_price
                 print('Coupon Applied')
 
                 print(final_price)
@@ -204,7 +209,7 @@ def checkout(request, total=0, quantity=0, cart_items=None):
             pass
         
     else:
-        final_price = grand_total
+        grand_total = grand_total
        
 
 
@@ -219,6 +224,8 @@ def checkout(request, total=0, quantity=0, cart_items=None):
         'grand_total': grand_total,
         'profile':profile,
         'coupon_apply_form':coupon_apply_form,
+        'coupon':coupon,
+          'deduction':deduction,
         
     }
     return render(request, 'check/checkout.html', context)
@@ -290,29 +297,16 @@ def buy_add_address(request):
 
 
 
-
-
-
-
-
-
-
-
-
-
-
 def coupon_apply(request):
     now = timezone.now()
     
     form = CouponApplyForm(request.POST)
     print(now)
     if form.is_valid():
-        
         code = form.cleaned_data['code']
         try:
             coupon = Coupon.objects.get(code__iexact=code,valid_from__lte=now,valid_to__gte=now,active=True)
             request.session['coupon_id']=coupon.id
-            print('Coupon session')
             return redirect('checkout')
         except Coupon.DoesNotExist:
             request.session['coupon_id'] = None

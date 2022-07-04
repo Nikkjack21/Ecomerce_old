@@ -1,5 +1,5 @@
 {% extends 'check/bases.html' %}
-
+{% load mathfilters%}
 {% block content %}
 
 
@@ -159,29 +159,35 @@
                        
                         </div>
              
-                        <div class="checkout-total-block">
+                        <div class="checkout-total-block ">
                           <ul>
-                            <li>
-                              <em>Sub total</em>
-                              <strong class="price"><span>Rs.</span>{{total}}</strong>
-                            </li>
-
-   
-                              <em>Tax</em>
-                              <strong class="price"><span>Rs.</span>{{tax}}</strong>
-                            </li>
-                            {% if coupon %}
+                            {% if  coupon %}
                             <li>
                               <a href="#" class='text-danger'>Coupon applied
                                 <span class='text-danger'>-{{deduction|floatformat:2}}</span>
                               </a>
                             </li>
                             <li class="checkout-total-price">
-                              <em>Total</em>
-                              <strong class="price"><span>Rs.</span>{{final_price}}</strong>
+                              <em>Sub total</em>
+                              <strong class="price"><span>Rs.</span>{{final_price|floatformat:2}}</strong>
                             </li>
                             {% else %}
+                            <li>
+                              <em>Sub total</em>
+                              <strong class="price"><span>Rs.</span>{{total}}</strong>
                             </li>
+                            {% endif %}
+   
+                              <em>Tax</em>
+                              <strong class="price"><span>Rs.</span>{{tax}}</strong>
+                            </li>
+                            {% if  coupon %}
+                          
+                            <li class="checkout-total-price">
+                              <em>Total</em>
+                              <strong class="price"><span>Rs.</span>{{grand_total}}</strong>
+                            </li>
+                            {% else %}
                             <li class="checkout-total-price">
                               <em>Total</em>
                               <strong class="price"><span>Rs.</span>{{grand_total}}</strong>

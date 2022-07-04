@@ -52,8 +52,11 @@
                       </td>
                       
                      <td class="checkout-quantity" style="text-align: center;" >{{cart_item.quantity}}</td>
+                     {% if coupon %}
+                     <td class="checkout-price"style="text-align: right;"><strong><span>Rs.</span>{{final_price|floatformat:2}}</strong></td>
+                     {% else %}
                       <td class="checkout-price"style="text-align: right;"><strong><span>Rs.</span>{{cart_item.product.price}}</strong></td>
-                      
+                      {% endif %}
                     
                     </tr>
                     {% endfor %}
@@ -92,10 +95,18 @@
 
 		<div class="card">
 		<div class="card-body">
+      {% if coupon %}
+      <dl class="dlist-align">
+        <dt>Total price:</dt>
+        <dd class="text-right pt-0">{{final_price|floatformat:2}}</dd>
+      </dl>
+{% else %}
 			<dl class="dlist-align">
 			  <dt>Total price:</dt>
 			  <dd class="text-right pt-0">{{total}}</dd>
 			</dl>
+
+      {% endif %}
 			<dl class="dlist-align">
 			  <dt>Tax:</dt>
 			  <dd class="text-right">{{tax}}</dd>

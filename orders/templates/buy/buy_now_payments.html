@@ -1,4 +1,4 @@
-{% extends 'orders/base.html' %}
+{% extends 'buy/base.html' %}
 
 {% block content %}
 {% load static %}
@@ -50,15 +50,15 @@
                     <tr>
                     
                       <td class="checkout-image">
-                        <a href="javascript:;"><img src="{{cart_itemss.images.url}}" alt=""></a>
+                        <a href="javascript:;"><img src="{{cart_items.images.url}}" alt=""></a>
                       </td>
                       <td class="checkout-description">
-                        <a href="javascript:;">{{cart_itemss.}}</a>
+                        <a href="javascript:;">{{cart_items.product_name}}</a>
                         
                       </td>
                       
                      <td class="checkout-quantity" style="text-align: center;" >x1</td>
-                      <td class="checkout-price"style="text-align: right;"><strong><span>Rs.</span>{{cart_itemss.price}}</strong></td>
+                      <td class="checkout-price"style="text-align: right;"><strong><span>Rs.</span>{{cart_items.price}}</strong></td>
                       
                     
                     </tr>
@@ -99,7 +99,7 @@
        
       </div>
     
-      <a href="/buy_cod/{{cart_itemss.id}}/{{order_data.order_number}}" class="btn btn-primary btn-block"> Cash On Delivery </a>
+      <a href="{% url 'buy_cod' order_data.order_number cart_items.id  %}" class="btn btn-primary btn-block"> Cash On Delivery </a>
 
 			<a href="{% url 'index' %}" class="btn btn-success  btn-block">Continue Shopping</a>
 		</div> <!-- card-body.// -->
@@ -111,12 +111,6 @@
 </div> 
 
 </div>
-
-
-
-
-
-
 
 
 
