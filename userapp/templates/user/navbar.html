@@ -34,25 +34,28 @@
     <div class="header" >
       <div class="container  ">
         <a class="site-logo" href="/"><img src="{% static 'assets/corporate/img/logos/resizeZhea-logos1.svg' %}" alt="Zhea Fashion"></a>
+        <a href="javascript:void(0);" class="mobi-toggler"><i class="fa fa-bars"></i></a>
 
         <!-- BEGIN CART -->
         <div class="top-cart-block">
           <div class="top-cart-info">
             <a href="javascript:void(0);" class="top-cart-info-count">{{cart_count}} items</a>
-            <a href="javascript:void(0);" class="top-cart-info-value">{{total}}</a>
+            <a href="javascript:void(0);" class="top-cart-info-value">₹ {{grand_total}}</a>
           </div>
           <i class="fa fa-shopping-cart"> </i>
                         
           <div class="top-cart-content-wrapper">
             <div class="top-cart-content">
               <ul class="scroller" style="height: 250px;">
+                {% for cart_item in cart_items %}
                 <li>
-                  <a href="shop-item.html"><img src="{% static 'assets/pages/img/cart-img.jpg' %}" alt="Rolex Classic Watch" width="37" height="34"></a>
-                  <span class="cart-content-count">x 1</span>
-                  <strong><a href="shop-item.html">Rolex Classic Watch</a></strong>
-                  <em>₹1230</em>
+                  <a href="#"><img src="{{cart_item.product.images.url}}" alt="Rolex Classic Watch" width="37" height="34"></a>
+                  <span class="cart-content-count">x {{cart_item.quantity}}</span>
+                  <strong><a href="#">{{cart_item.product.product_name}}</a></strong>
+                  <em>₹{{cart_item.product.price}}</em>
                   <a href="javascript:void(0);" class="del-goods">&nbsp;</a>
                 </li>
+                {% endfor %}
               
               </ul> 
 

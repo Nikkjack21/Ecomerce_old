@@ -60,3 +60,25 @@ class ProductOffer(models.Model):
         return self.discount/100*sub_total
 
     
+
+class Coupon(models.Model):
+    code = models.CharField(max_length=50,unique=True)
+    valid_from = models.DateTimeField()
+    valid_to = models.DateTimeField()
+    discount = models.IntegerField(validators=[MinValueValidator(0),MaxValueValidator(100)])
+    active = models.BooleanField()
+
+    def __str__(self):
+        return self.code
+
+    def discount_amount(self,total):
+        return self.discount/100*total
+
+
+
+class CouponUsedUser(models.Model):
+    coupon = models.ForeignKey(Coupon, on_delete=models.CASCADE)
+    user = models.ForeignKey(Account, on_delete=models.CASCADE)
+    count =models.CharField(max_length=20, null=True, blank=True)
+    def __str__(self):
+        return self.user.username

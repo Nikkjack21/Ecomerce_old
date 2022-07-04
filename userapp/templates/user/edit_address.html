@@ -1,0 +1,128 @@
+{% extends 'user/adr_base.html' %}
+
+{% block content %}
+
+
+
+
+
+
+
+
+
+<div class="row">
+    <div class="col-md-8 mx-auto">
+      <div class="card mb-4">
+        <div class="card-header py-3">
+          <h5 class="mb-0">Edit address</h5>
+        </div>
+        <div class="card-body">
+          <form action="" method="POST">
+            {% csrf_token %}
+            <!-- 2 column grid layout with text inputs for the first and last names -->
+ 
+  
+            <!-- Email input -->
+            <div class="row mb-4">
+
+                <div class="col">
+                  <div class="form-outline">
+                    <label class="form-label"> Name: </label>
+                    <input type="text" value="{{ adrs.name }}" name="name" class="form-control" />
+                    
+                  </div>
+                </div>
+
+                <div class="col">
+                  <div class="form-outline">
+                    <label class="form-label"> Phone: </label>
+                    <input type="number" value="{{ adrs.phone }}"   name="phone" class="form-control" />
+                    
+                  </div>
+                </div>
+
+                <div class="col">
+                  <div class="form-outline">
+                    <label class="form-label">Email: </label>
+                    <input type="email" value="{{ adrs.email }}"   name="email" class="form-control" />
+                    
+                  </div>
+                </div>
+              
+                <div class="col">
+                  <div class="form-outline">
+                    <label class="form-label">Address: </label>
+                    <input type="text" value="{{ adrs.address_line }}"  name="address_line_1" class="form-control" />
+                    
+                  </div>
+                </div>
+            
+              </div>
+  
+              <div class="row mb-4">
+                <div class="col-md-4">
+                  <div class="form-outline">
+                    <label class="form-label">Pincode: </label>
+                    <input type="number" value="{{ adrs.pincode }}" name="pincode" class="form-control" />
+                    
+                  </div>
+                </div>
+  
+              <div class="row mb-4">
+                <div class="col-md-4">
+                  <div class="form-outline">
+                    <label class="form-label">City: </label>
+                    <input type="text" value="{{ adrs.city }}" name="city" class="form-control" />
+                    
+                  </div>
+                </div>
+                <div class="col-md-4">
+                  <div class="form-outline">
+                    <label class="form-label" >State: </label>
+                    <input type="text" value="{{ adrs.state }}" name="state" class="form-control" />
+                   
+                  </div>
+                </div>
+                <div class="col-md-4">
+                  <div class="form-outline">
+                    <label class="form-label" >Country:</label>
+                    <input type="text" value="{{ adrs.country }}" name="country" class="form-control" />
+                    
+                  </div>
+                </div>
+              </div>
+  
+            <!-- Checkbox -->
+            <div class="form-check d-flex justify-content-between mb-2">
+                <div>
+                   <button type="submit" class="btn btn-primary">Submit</button>
+                </div>
+                <div>
+                    <a href="/user_address/" class="btn btn-success" >Go back</a>
+  
+                </div>
+               
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  
+
+  </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+{% endblock %}

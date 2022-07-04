@@ -70,11 +70,12 @@
                   <input type="radio" name="selection" value="{{adr.id}}" selected checked class="card-input-element " />
         
                     <div class="card card-default card-input">
-                      <div class="card-header">{{adr.user.first_name}} {{adr.user.last_name}}</div>
+                      <div class="card-header">{{adr.name}}</div>
                       <div class="card-body">
-                        <p> {{adr.user.phone_number}}</p>
-                        <p> {{adr.address_line_1}}</p>
-                        <p> {{adr.address_line_2}}, {{adr.city}}, {{adr.state}}</p>
+                        <p> {{adr.phone}}</p>
+                        <p> {{adr.address_line}}</p>
+                        <p> {{adr.pincode}}</p>
+                        <p> {{adr.city}}, {{adr.state}}</p>
                         <p>{{adr.country}}</p>
                         
                       </div>
@@ -94,33 +95,7 @@
  
 
 
-      {% comment %} <div class="grid-container" >
-          <div class="card w-75 " >
-              <div class="card-body ">
-                <h5 class="card-title">ADD ADDRESS</h5>
-                <p class="card-text">Click below to add new adress</p>
-                <a href="{%url 'add_addresss' %}" class="btn btn-warning">Add Address</a>
-              </div>
-            </div>
-            {% for adr in profile %}
-            <input type="radio" name="selection" value="{{adr.id}}" selected checked class="card-input-element" />
-          <div class="card w-75">
-              <div class="card-body card-input">
-                <h5 class="card-title">{{user.first_name}} {{user.last_name}}</h5>
-                <h6 class="card-title">{{user.phone_number}} </h6>
-                <p class="card-text">{{adr.address_line_1}}</p>
-                <p class="card-text">{{adr.address_line_2}}</p>
-                <p class="card-text">{{adr.city}}, {{adr.state}}</p>
-                <p class="card-text">{{adr.country}}</p>
 
-                <a href="{% url 'edit_profile' adr.id %}" class="btn btn-success">Edit </a>
-                
-              </div>
-            </div>
-              {% endfor %}
- 
-      </div>
-     {% endcomment %}
 
 
 <!-----END ---SLECT ADDRESS-------->
@@ -137,71 +112,15 @@
             <div id="shipping-address" class="panel panel-default">
               <div class="panel-heading">
                 <h2 class="panel-title">
-                  <a data-toggle="collapse" data-parent="#checkout-page" href="#shipping-address-content" class="accordion-toggle collapsed" aria-expanded="true">
+                  <a data-toggle="collapse" data-parent="#checkout-page" href="{% url 'checkout_add_address' %}" class="accordion-toggle collapsed" aria-expanded="true">
                   
-                <input type="radio" name="selection" value="typeadr" id="">
-                  <label for="">Delivery Details</label>
+                <input type="radio" style="display: none;" name="selection" value="typeadr" id=""> Add Address
+                
+                  
                   </a>
                 </h2>
               </div>
-              <div id="shipping-address-content" class="panel-collapse ">
-                <div class="panel-body row">
-
-
-
-                  <div class="col-md-6 col-sm-6">
-                    
-                    <div class="form-group">
-                      <label >First Name <span class="require">*</span></label>
-                      <input type="text"  name="first_name"  class="form-control">
-                    </div>
-                    <div class="form-group">
-                      <label >Last Name <span class="require">*</span></label>
-                      <input type="text"  name="last_name" class="form-control">
-                    </div>
-                    <div class="form-group">
-                      <label >E-Mail <span class="require">*</span></label>
-                      <input type="text" name="email" class="form-control">
-                    </div>
-                    <div class="form-group">
-                      <label >Phone <span class="require">*</span></label>
-                      <input type="text"  name="phone" class="form-control">
-                    </div>
-                    <div class="form-group">
-                      <label>Fax</label>
-                      <input type="text" id="fax-dd" class="form-control">
-                    </div>
-                  
-                  </div>
-                  <div class="col-md-6 col-sm-6">
-                    <div class="form-group">
-                      <label >Address 1</label>
-                      <input type="text" name="address_line_1" class="form-control">
-                    </div>
-                    <div class="form-group">
-                      <label >Address 2</label>
-                      <input type="text"   name="address_line_2" class="form-control">
-                    </div>
-                    <div class="form-group">
-                      <label >City <span class="require">*</span></label>
-                      <input type="text"  name="city" class="form-control">
-                    </div>
-                    <!-- <div class="form-group">
-                      <label for="post-code-dd">Post Code <span class="require">*</span></label>
-                      <input type="text" id="postcode" name="postcode" class="form-control">
-                    </div> -->
-                    <div class="form-group">
-                      <label for="country-dd">Country <span class="require">*</span></label>
-                      <input type="text"  name="country" class="form-control">
-                    </div>
-                    <div class="form-group">
-                      <label >State <span class="require">*</span></label>
-                     
-                        <input type="text"  name="state" class="form-control">
-                   
-                    </div>
-                  </div>
-
+            
                   <div id="confirm-content" class="panel-collapse ">
                     <div class="panel-body row">
                       <div class="col-md-12 clearfix">
@@ -246,25 +165,55 @@
                               <em>Sub total</em>
                               <strong class="price"><span>Rs.</span>{{total}}</strong>
                             </li>
-                            <li>
+
+   
                               <em>Tax</em>
                               <strong class="price"><span>Rs.</span>{{tax}}</strong>
                             </li>
-                        
+                            {% if coupon %}
+                            <li>
+                              <a href="#" class='text-danger'>Coupon applied
+                                <span class='text-danger'>-{{deduction|floatformat:2}}</span>
+                              </a>
+                            </li>
+                            <li class="checkout-total-price">
+                              <em>Total</em>
+                              <strong class="price"><span>Rs.</span>{{final_price}}</strong>
+                            </li>
+                            {% else %}
+                            </li>
                             <li class="checkout-total-price">
                               <em>Total</em>
                               <strong class="price"><span>Rs.</span>{{grand_total}}</strong>
                             </li>
+                            {% endif %}
                           </ul>
                         </div>
                     
                         <div class="clearfix"></div>
-                        <button class="btn btn-primary pull-right" name="submit" type="submit" id="button-confirm">Confirm Order</button>
+                        <button class="btn btn-primary pull-right" name="submit" type="submit" id="button-confirm">Proceeed to payments</button>
                         <button type="button" class="btn btn-default pull-right margin-right-20">Cancel</button>
                       </div>
                     </div>
                   </div>
                 </form>
+                <div class="d-flex">
+              
+
+                    <form action="{% url 'coupon_apply' %}" method="POST">
+                      {% csrf_token %}
+                    <div class="input-group">
+                      {{coupon_apply_form}}
+                      <div class="input-group-append">
+
+                        <button type="submit" class="btn-success">Apply Coupon</button>
+                      </div>
+                    </div>
+                  </form>
+            
+
+                
+                </div>
                 </div>
               </div>
             </div>

@@ -80,8 +80,18 @@
         {% endfor %}
      
      </script>
-     {% block scripts %}
-            {% endblock scripts %}
+     <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+     <script>
+        {% if messages.error %}
+        {% for msgs in messages %}
+     
+        swal('{{ msgs }}');
+     
+        {% endfor %}
+        {% endif %}
+     
+     </script>
+  
 </body>
 
 </html>

@@ -13,7 +13,7 @@ from orders.models import Order
 from projectseven import settings
 from store.models import Product
 from category.models import Category, MainCategory
-from accounts.models import Account, UserProfile, Wallet
+from accounts.models import Account, Address, UserProfile, Wallet
 from django.contrib import messages
 from django.contrib.auth.models import User
 from twilio.rest import Client
@@ -25,38 +25,12 @@ from django.http import HttpResponse
 from accounts.forms import UserForm, UserProfileForm
 from django. db. models import Q
 
-# def rend_dy(request):
-#     main_cat      = MainCategory.objects.all()
-#     products = Product.objects.all().filter(is_available=True)
-
-#     context = {
-#         'products' : products,
-#         'main_cat':main_cat,
-#     }
-#     return context
-
-
-
-
-# def navbar(request):
-#     main_cat      = MainCategory.objects.all()
-#     products = Product.objects.all().filter(is_available=True)
-
-#     context = {
-#         'products' : products,
-#         'main_cat':main_cat,
-#     }
-   
-#     return render(request, 'user/navbar.html', context)
-
-
-
-
 
 
 
 def index(request):
-    return render(request, 'user/shop-index.html')
+    products = Product.objects.all().filter(is_available=True)
+    return render(request, 'user/shop-index.html', {'products':products})
 
 
 
@@ -451,7 +425,9 @@ def p_details(request, category_slug, product_slug):
     }
     return render(request,'user/product_detail.html', context)
 
+    
 
+@login_required(login_url='signin')
 def my_account(request):
         return render(request, 'user/myaccount.html', )
 
@@ -513,6 +489,9 @@ def editProfile(request, id=id):
     return render(request, 'user/editpro.html', context)
 
 
+
+
+
 def my_orders(request):
     user = request.user
     orders  = Order.objects.filter(user=user).order_by('-id')
@@ -536,27 +515,67 @@ def order_user_actions(request, id):
 
 
 
+def order_return(request,id):
+    user = request.user
+    orders = Order.objects.get(id=id,user=user)
+    orders.status = 'Returned'
+    orders.save()
+    return redirect('my_orders')
+
+
+
+
+
+# def user_address(request):
+#     address = UserProfile.objects.filter(user=request.user)
+#     context={
+#         'address': address
+#     }
+#     return render(request, 'user/user_address.html', context)
+
+
+
 
 def user_address(request):
-    address = UserProfile.objects.filter(user=request.user)
+    address = Address.objects.filter(user=request.user)
     context={
         'address': address
     }
     return render(request, 'user/user_address.html', context)
 
 
-def add_address(request):
-    adrs  = UserProfile()
+
+
+
+# def add_address(request):
+#     adrs  = UserProfile()
     
-    if request.method=="POST":
+#     if request.method=="POST":
+#         adrs.user               = request.user
+#         adrs.address_line_1     = request.POST.get('address_line_1')
+#         adrs.address_line_2     = request.POST.get('address_line_2')
+#         adrs.city               = request.POST.get('city')
+#         adrs.state              = request.POST.get('state')
+#         adrs.country            = request.POST.get('country')
+#         adrs.save()
+#         messages.success(request, "Address Added")
+#         return redirect(add_address)
+#     context={
+#         'adrs':adrs
+#     }
+#     return render(request, 'user/add_address.html', context)
+
+
+
+def add_address(request):
+    adrs     = Address()
+    if request.method == "POST":
         adrs.user               = request.user
-        # adrs.first_name         = request.POST.get('first_name')
-        # adrs.last_name          = request.POST.get('last_name')
-        # adrs.email              = request.POST.get('email')
-        # adrs.phone_number       = request.POST.get('phone_number')
-       
-        adrs.address_line_1     = request.POST.get('address_line_1')
-        adrs.address_line_2     = request.POST.get('address_line_2')
+        adrs.name               = request.POST.get('name')
+        adrs.phone              = request.POST.get('phone')
+        adrs.email              = request.POST.get('email')
+        adrs.address_line       = request.POST.get('address_line_1')
+        adrs.pincode            = request.POST.get('pincode')
         adrs.city               = request.POST.get('city')
         adrs.state              = request.POST.get('state')
         adrs.country            = request.POST.get('country')
@@ -565,8 +584,92 @@ def add_address(request):
         return redirect(add_address)
     context={
         'adrs':adrs
-    }
+    }   
     return render(request, 'user/add_address.html', context)
+
+
+def edit_address(request, id):
+    adrs     = Address.objects.get(id=id)
+    if request.method == "POST":
+        adrs.user               = request.user
+        adrs.name               = request.POST.get('name')
+        adrs.phone              = request.POST.get('phone')
+        adrs.email              = request.POST.get('email')
+        adrs.address_line       = request.POST.get('address_line_1')
+        adrs.pincode            = request.POST.get('pincode')
+        adrs.city               = request.POST.get('city')
+        adrs.state              = request.POST.get('state')
+        adrs.country            = request.POST.get('country')
+        adrs.save()
+        messages.success(request, "Address Added")
+        return redirect('edit_address', id)
+    context={
+        'adrs':adrs
+    }   
+    return render(request, 'user/edit_address.html', context)
+
+
+
+
+
+
+
+
+# def buy_add_address(request):
+#     adrs     = Address()
+ 
+#     if request.method == "POST":
+#         adrs.user               = request.user
+#         adrs.name               = request.POST.get('name')
+#         adrs.phone              = request.POST.get('phone')
+#         adrs.email              = request.POST.get('email')
+#         adrs.address_line       = request.POST.get('address_line_1')
+#         adrs.pincode            = request.POST.get('pincode')
+#         adrs.city               = request.POST.get('city')
+#         adrs.state              = request.POST.get('state')
+#         adrs.country            = request.POST.get('country')
+#         adrs.save()
+#         messages.success(request, "Address Added")
+#         return redirect('buy_now')
+#     context={
+#         'adrs':adrs,
+        
+      
+#     }   
+#     return render(request, 'user/add_address.html', context)
+
+
+
+
+
+
+
+def checkout_add_address(request):
+    adrs     = Address()
+    if request.method == "POST":
+        adrs.user               = request.user
+        adrs.name               = request.POST.get('name')
+        adrs.phone              = request.POST.get('phone')
+        adrs.email              = request.POST.get('email')
+        adrs.address_line       = request.POST.get('address_line_1')
+        adrs.pincode            = request.POST.get('pincode')
+        adrs.city               = request.POST.get('city')
+        adrs.state              = request.POST.get('state')
+        adrs.country            = request.POST.get('country')
+        adrs.save()
+        messages.success(request, "Address Added")
+        return redirect('checkout')
+    context={
+        'adrs':adrs
+    }   
+    return render(request, 'user/add_address.html', context)
+
+
+
+
+
+
+
 
 
 

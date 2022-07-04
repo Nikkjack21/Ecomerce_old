@@ -10,9 +10,10 @@
             <h5 class="card-header">Billing Addresse</h5>
             <div class="card-body ">
             
-              <p class="mb-1">{{order_data.first_name}} {{order_data.last_name}}</p>
+              <p class="mb-1">{{order_data.first_name}}</p>
+              <p class="mb-1">{{order_data.phone}}</p>
               <p class="mb-1">{{order_data.address_line_1}},</p>
-              <p class="mb-1">{{order_data.address_line_2}}</p>
+            
               <p class="mb-1">{{order_data.email}}</p>
               <p class="mb-1">{{order_data.city}}, {{order_data.state}}</p>
               <p class="mb-1">{{order_data.country}}</p>
@@ -21,14 +22,7 @@
           </div>
 
           
-        <div class="card">
-            <h5 class="card-header">Payment Method</h5>
-            <div class="card-body">
-            
-              <p class="card-text">Cash On Delivery</p>
-              
-            </div>
-          </div>
+  
 
         <div class="card">
             <h5 class="card-header">Review Product</h5>
@@ -117,7 +111,7 @@
       <div id="paypal-button-container">
        
       </div>
-      <button class="btn btn_1 mt-3" style="padding:17px 35px" id="rzp-button1">Pay with Razorpay</button>
+      <button class="btn btn_1 mt-3"  style="padding:17px 35px" id="rzp-button1">Pay with Razorpay</button>
       <a href="{% url 'cash_on_delivery' order_data.order_number %}" class="btn btn-primary btn-block"> Cash On Delivery </a>
 
 			<a href="./store.html" class="btn btn-success  btn-block">Continue Shopping</a>

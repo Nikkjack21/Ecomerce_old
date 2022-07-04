@@ -15,8 +15,8 @@ from slugify import slugify
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.cache import cache_control
 from orders.models import Order, OrderProduct, Payment, RazorPay
-from cartapp.models import CategoryOffer, ProductOffer
-from .forms import OrderEditForm, ProductOfferForm, CategoryOfferForm
+from cartapp.models import CategoryOffer, Coupon, ProductOffer
+from .forms import CouponAdminForm, OrderEditForm, ProductOfferForm, CategoryOfferForm
 from django.db.models import Sum,Count
 from decimal import Decimal
 from django.utils.text import Truncator
@@ -467,11 +467,11 @@ def monthly_report(request,date):
                
             }
         print(salesreport)
-        print("111")
+        print("Showing monthly Orders")
         return render(request,'adm/search_report_sales.html',context)
-        return render(request,'admin/sales_report_search.html',context)
     else:
-        messages.info(request,"No Orders")
+        print("Showing No monthly Orders")
+        messages.error(request, "No orders in this month")
     return render(request,'adm/sales_report.html',context)
 
 
@@ -494,36 +494,36 @@ def yearly_report(request,date):
                 'salesreport' : salesreport ,   
             }
         print(salesreport)
-        print("222222222222222222222222222222222222222")
+        print("Showing yearly Orders")
         return render(request,'adm/search_report_sales.html',context)
     else:
-        print("44444444444444444")
+        print("No Orders")
         messages.info(request,"No Orders")
     return render(request,'adm/sales_report.html',context)
 
 
 
-def weekly_report(request,date):
-    context = None
-    frmdate = date
+# def weekly_report(request,date):
+#     context = None
+#     frmdate = date
    
-    fm = [ 2022 , 1 , frmdate ]
-    todt = [2022 , 12 , frmdate ]
+#     fm = [ 2022 , 1 , frmdate ]
+#     todt = [2022 , 12 , frmdate ]
     
-    print(fm)
+#     print(fm)
             
-    salesreport = Order.objects.filter(created_at__gte=datetime.date(fm[0],fm[1],fm[2]), created_at__lte=datetime.date(todt[0],todt[1],todt[2])).annotate(day=TruncWeek ('created_at')).values('weekly').annotate(count=Count('id')).annotate(sum=Sum('order_total')).order_by('-weekly')
-    if len(salesreport) > 0 :   
-        context = {
-                'salesreport' : salesreport ,   
-            }
-        print(salesreport)
-        print("222222222222222222222222222222222222222")
-        return render(request,'adm/search_report_sales.html',context)
-    else:
-        print("44444444444444444")
-        messages.info(request,"No Orders")
-    return render(request,'adm/sales_report.html',context)
+#     salesreport = Order.objects.filter(created_at__gte=datetime.date(fm[0],fm[1],fm[2]), created_at__lte=datetime.date(todt[0],todt[1],todt[2])).annotate(day=TruncWeek ('created_at')).values('weekly').annotate(count=Count('id')).annotate(sum=Sum('order_total')).order_by('-weekly')
+#     if len(salesreport) > 0 :   
+#         context = {
+#                 'salesreport' : salesreport ,   
+#             }
+#         print(salesreport)
+#         print("222222222222222222222222222222222222222")
+#         return render(request,'adm/search_report_sales.html',context)
+#     else:
+#         print("44444444444444444")
+#         messages.info(request,"No Orders")
+#     return render(request,'adm/sales_report.html',context)
 
 
 
@@ -588,7 +588,37 @@ def show_result(request):
 
 
 
-# def dashboard(request):
+def coupon_list(request):
+    coupon   = Coupon.objects.all()
+    return render(request, 'adm/coupon_list.html', {'coupon': coupon})
 
-    
-#     return render (request,'admin_panel/dashboard_adm.html',context)
+
+
+
+def add_coupon(request):
+    form = CouponAdminForm(request.POST)
+    if form.is_valid():
+        form.save()
+        messages.info(request,'coupon added successfully')
+        return redirect('coupon_list')
+    context ={
+        'form':form
+    }
+    return render (request,'adm/add_coupon.html',context)
+
+
+def edit_coupon(request,id):
+    coupon = Coupon.objects.get(id=id)
+    form = CouponAdminForm(instance=coupon)
+    if request.method =="POST":
+        form = CouponAdminForm(request.POST,instance=coupon)
+        form.save()
+        messages.success(request,'coupon updated successfully')
+        return redirect('coupon_list')
+    return render (request,'adm/edit_coupon.html',{'form':form,'coupon':coupon})
+
+
+def delete_coupon(request,id):
+    coupon = Coupon.objects.get(id=id)
+    coupon.delete()
+    return redirect('coupon_list')

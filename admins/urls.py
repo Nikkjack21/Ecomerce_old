@@ -28,12 +28,16 @@ urlpatterns = [
     path('sales_report/', views.sales_report, name='sales_report'),
     path('monthly_report/<int:date>/', views.monthly_report, name='monthly_report'),
     path('year_report/<int:date>/', views.yearly_report, name='year_report'),
-    path('weekly_report/<int:date>/', views.weekly_report, name='weekly_report'),
     path('show_result/',views.show_result, name='show_result'),
     path('cat_offer/', views.offer_category, name='cat_offer'),
     path('add_cat_offer/', views.add_offer_cat, name='add_cat_offer'),
     path('edit_cat_offer/<int:id>/', views.edit_cat_offer, name='edit_cat_offer'),
     path('delete_cat_offer/<int:id>/', views.delete_cat_offer, name='delete_cat_offer'),
+    path('coupon_list/', views.coupon_list, name='coupon_list'),
+    path('coupon_add/', views.add_coupon, name='coupon_add'),
+    path('coupon_edit/<int:id>/', views.edit_coupon, name="coupon_edit"),
+    path('coupon_delete/<int:id>/', views.delete_coupon, name="coupon_delete"),
+
    
 ]
 

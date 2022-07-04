@@ -108,7 +108,20 @@
 
                 <td>
                   
-                  <button class="btn btn-warning " disabled >Cancel</button> 
+                  <button class="btn btn-warning " disabled >Cancelled</button> 
+                </td>
+                {% endif %}
+                {% if  order.status == 'Completed'%}
+                <td>
+                  
+                  <a href="{% url 'order_return' order.id%}"> <button class="btn btn-danger" onclick="return confirm ('Are you sure to cancel?')" >Return Order</button> </a>
+                </td>
+
+                {% elif order.status == 'Returned' %}
+
+                <td>
+                  
+                  <button class="btn btn-warning " disabled >Returned</button> 
                 </td>
 
 

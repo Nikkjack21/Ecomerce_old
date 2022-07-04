@@ -1,4 +1,4 @@
-from cartapp.models import ProductOffer, CategoryOffer
+from cartapp.models import Coupon, ProductOffer, CategoryOffer
 from django import forms
 from dataclasses import fields
 import datetime
@@ -55,3 +55,16 @@ class OrderEditForm(forms.ModelForm):
     class Meta:
         model = Order
         fields= '__all__'
+
+
+
+
+
+class CouponAdminForm(forms.ModelForm):   
+    class Meta:
+        model = Coupon
+        fields = '__all__'
+        widgets = {
+            'valid_from': DateTimeLocal(),
+            'valid_to': DateTimeLocal(),
+        }

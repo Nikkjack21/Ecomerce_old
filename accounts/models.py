@@ -111,4 +111,22 @@ class UserProfile(models.Model):
     def __str__(self):
         return self.user.first_name
 
+
+class Address(models.Model):
+    user                        = models.ForeignKey(Account, on_delete=models.CASCADE)
+    name                        = models.CharField(max_length=50, blank=True)
+    phone                       = models.CharField(max_length=25)
+    email                       = models.EmailField(max_length=50, null=True)
+    address_line                = models.CharField(max_length=100, blank=True)      
+    pincode                     = models.IntegerField(null=True)
+    city                        = models.CharField( max_length=20)
+    state                       = models.CharField( max_length=20)
+    country                     = models.CharField( max_length=20)
+
+    def __str__(self):
+        return self.name
+    
+
+
+
     
