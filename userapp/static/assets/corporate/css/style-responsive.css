@@ -555,7 +555,8 @@
 		margin-bottom: 0;
 	}
 	.product-item .img-responsive {
-		width: 100%;
+		width:100%;
+		
 	}
 	.pagination {
 		float: left !important;

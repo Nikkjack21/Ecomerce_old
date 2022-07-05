@@ -87,7 +87,7 @@ def payment(request):
 
 
 
-def place_order(request, total=0, quantity=0):
+def place_order(request, total=0, quantity=0,   coupon=None):
     current_user = request.user
     if request.user.is_authenticated:
         cart_itemss   = CartItem.objects.filter(user=current_user, is_active=True,)
@@ -99,6 +99,9 @@ def place_order(request, total=0, quantity=0):
     
     global order_data
     # global grand_total
+    final_price=0
+    deduction=0
+  
     grand_total=0
     tax=0
   
@@ -464,7 +467,8 @@ def razor_success(request):
 #     return render(request, 'buy/buy_now_payments.html', {'cart_items':cart_items})
 
 
-def buy_now_place_order(request, id):
+def buy_now_place_order(request, id, deduction=0, final_price=0,coupon=None):
+
     cart_itemss     = Product.objects.get(id=id)
     total           = 0
     tax             = 0
@@ -548,6 +552,26 @@ def buy_now_place_order(request, id):
 
             order_data      = Order.objects.get(user=request.user, is_ordered=False, order_number=order_number)
             adrs            = Address.objects.filter(user=request.user)
+            if request.session:
+                coupon_id = request.session.get('coupon_id')
+                print(coupon_id)
+                try:
+                    coupon = Coupon.objects.get(id=coupon_id)
+                    deduction = coupon.discount_amount(total)
+                    final_price = total-deduction
+                    print(final_price)
+                    grand_total = tax + final_price
+                    print(grand_total)
+                    print('SHOWNG APPLIED COUPON GRAND TOTAL')
+                    
+                except:
+                    pass
+        
+            else:
+        
+
+
+                grand_total = grand_total
 
 
         # authorize razorpay client with API Keys.
@@ -579,6 +603,9 @@ def buy_now_place_order(request, id):
                 'razorpay_amount' : amount,
                 'currency' : currency ,
                 'id': id,
+                'final_price': final_price,
+                'deduction':deduction,
+                'coupon': coupon,
 
             }
             razor_model =RazorPay()

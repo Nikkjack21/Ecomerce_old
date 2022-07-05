@@ -60,7 +60,7 @@
 
     <div class="title-wrapper">
         <div class="container"><div class="container-inner">
-          <h1><span>MEN</span> CATEGORY</h1>
+          <h1><span>All</span> PRODUCTS</h1>
           <em>Over 4000 Items are available here</em>
         </div></div>
       </div>
@@ -69,8 +69,8 @@
         <div class="container">
           <ul class="breadcrumb">
               <li><a href="{%url 'index'%}">Home</a></li>
-              <li><a href="">Store</a></li>
-              <li class="active">Men category</li>
+          
+              <li class="active">All Products </li>
           </ul>
           <!-- BEGIN SIDEBAR & CONTENT -->
           <div class="row margin-bottom-40">
@@ -81,18 +81,11 @@
                 {% for main in main_cat %}
                 <li class="list-group-item clearfix "  >
                   <a href="{% url 'p_store' main.id %}" class=" ">
-                    <i class="fa fa-angle-right"></i>
+                    <i class="fa fa-angle-right "></i>
                    {{main.name}}
                     
                   </a>
-                  <!-- <ul class="dropdown-menu" style="display:none;">
-               <li class="list-group-item dropdown clearfix ">
-                      {% for sub in main.subcategory.all %}
-                      <a href="#" class=""><i class="fa fa-angle-right"></i> {{sub.category_name}} </a>
-                      {% endfor %}
-                    </li> 
-
-                  </ul> -->
+      
                 </li>
 
                 {% endfor %}

@@ -65,7 +65,7 @@
       <div class="main">
         <div class="container">
           <ul class="breadcrumb">
-              <li><a href="index.html">Home</a></li>
+              <li><a href="{% url 'index' %}">Home</a></li>
               <li><a href="">Store</a></li>
               <li class="active">Men category</li>
           </ul>
@@ -148,9 +148,7 @@
                     <a href="{% url 'cart' %}" class="btn btn-info" type="submit">view cart</i></a>
 
                     {% else %}
-                    <div class="product-quantity">
-                        <input id="product-quantity" type="text" value="1" readonly class="form-control input-sm">
-                    </div>
+         
                     <a href="{% url 'add_cart' single_product.id %} " class="btn btn-primary" type="submit">Add to cart</a>
                     {% endif %}
                   </div>

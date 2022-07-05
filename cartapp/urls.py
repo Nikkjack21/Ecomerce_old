@@ -10,6 +10,7 @@ urlpatterns =[
     path('checkout/', views.checkout, name='checkout'),
     path('buy_now_checkout/<int:id>/', views.buy_now, name='buy_now_checkout'),
     path('coupon_apply/',views.coupon_apply,name='coupon_apply'),
+    path('add_cart_ajax/', views.add_cart_ajax, name="add_cart_ajax"),
 
     
 ]

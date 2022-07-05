@@ -9,7 +9,7 @@ from django.contrib import messages
 from django.shortcuts import redirect, render
 from django.contrib.auth import authenticate,login, logout
 from accounts.models import Account
-from category.models import Category
+from category.models import Category, MainCategory
 from store.models import Product
 from slugify import slugify
 from django.contrib.auth.decorators import login_required
@@ -139,6 +139,67 @@ def action_user(request, id):
 
 
 #USER MANAGEMENT DETAILS ENDS HERE------------>
+
+
+
+#CATEGORY MANAGEMENT DETAILS BEGINS HERE------------>
+
+
+def main_view(request):
+    main_cat  = MainCategory.objects.all()
+    return render(request, 'adm/main_cat.html', {"main_cat": main_cat})
+
+
+
+def main_add(request):
+    main     = MainCategory()
+    if request.method == "POST":
+        main.name       = request.POST.get('name')
+
+        var1  = main.name
+
+        if MainCategory.objects.filter(name=main.name).exists():
+            messages.info(request, "Main Category {} already exists " .format(var1))
+            print('Main category exits')
+            return redirect(main_add)
+            
+
+        if main.name =='' :
+            messages.info(request, "Category fields cannot be blank")
+            print('Filed blank')
+            return redirect(main_add)
+        main.save()
+        print("CATEGORY ADDEDD SUCCESSFULLY")
+        messages.info(request, "Category Added")
+        return redirect(main_view)
+    return render(request, 'adm/main_add.html')
+        
+        
+
+
+# def main_edit(request, id):
+#     obj =MainCategory.objects.get(id=id)
+#     if request.method == 'POST':
+#         obj.name              = request.POST.get('name')
+#         obj.save()
+#         return redirect(main_view)
+#     context = {
+#         'obj': obj
+#     }
+#     return render(request, 'adm/main_edit.html', context)
+
+
+
+def main_del(request, id):
+    delCat = MainCategory.objects.get(id=id)
+    delCat.delete()
+    return redirect(main_view)
+
+#MAIN CATEGORY MANAGEMENT DETAILS ENDS HERE------------>
+
+
+
+
 
 #CATEGORY MANAGEMENT DETAILS BEGINS HERE------------>
 

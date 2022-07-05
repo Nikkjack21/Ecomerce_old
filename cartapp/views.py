@@ -13,8 +13,8 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.contrib.auth.decorators import login_required
 from .forms import CouponApplyForm
 from django.contrib import messages
-
-
+from django.http import JsonResponse
+import json
 # Create your views here.
 
 
@@ -26,9 +26,9 @@ def offer_check_function(item):
     if ProductOffer.objects.filter(product=product,active=True).exists():
         if product.pro_offer:
             off_total = product.price - product.price*product.pro_offer.discount/100
-    elif CategoryOffer.objects.filter(category=item.product.category).exists():
-           if item.product.category.cat_offer:
-               off_total = product.price - product.price*item.product.category.cat_offer.discount/100
+    # if CategoryOffer.objects.filter(category=item.product.category).exists():
+    #        if item.product.category.cat_offer:
+    #            off_total = product.price - product.price*item.product.category.cat_offer.discount/100
     else:
         off_total = product.price
         print(off_total)
@@ -312,3 +312,17 @@ def coupon_apply(request):
             request.session['coupon_id'] = None
             print('Coupon session not working')
             return redirect('checkout')
+
+
+
+
+def add_cart_ajax(request):
+    if request.method == "POST":
+        body = json.loads(request.body)
+        id = body['id']
+        
+        cart_products = CartItem.objects.get(id=id)
+        cart_products.quantity= cart_products.quantity+1
+        cart_products.save()
+        data = {'quantity' : cart_products.quantity }
+        return JsonResponse(data)

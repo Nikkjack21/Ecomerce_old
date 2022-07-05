@@ -30,7 +30,8 @@ from django. db. models import Q
 
 def index(request):
     products = Product.objects.all().filter(is_available=True)
-    return render(request, 'user/shop-index.html', {'products':products})
+    pop   = Product.objects.all().filter(is_available=True)[6:]
+    return render(request, 'user/shop-index.html', {'products':products, 'pop':pop})
 
 
 
@@ -95,7 +96,7 @@ def otp(request):
         phone_number = request.POST['phone_number']
         if mobile == phone_number:
             account_sid     = 'AC29ac10e058d302306bbbd63a523a0f15'
-            auth_token      = 'af9cd927f3840a8454f7e81465fa9cb5'
+            auth_token      = 'b3cd2fac3ad03b3e05995b9ddfe9d25c'
 
             client      = Client(account_sid, auth_token)
             global otp
@@ -149,6 +150,8 @@ def signup(request):
         # phone_number    = request.POST.get('phone_number')
         password        = request.POST.get('password')
         password2       = request.POST.get('password2')
+        s               = first_name
+        refer           = s[:len(s)//2] + 'ZHEA' + "XYZ"
 
         if password == password2:
             if username=='' and email=='' and password=='':
@@ -168,7 +171,7 @@ def signup(request):
 
                 else:
                     myuser = Account.objects.create_user(first_name, last_name, username, email, password)
-                    # myuser.phone_number = phone_number   
+                    myuser.referral_code = refer
                     myuser.save()
                     user_name = myuser
                     context = { 
@@ -217,7 +220,7 @@ def phone_verification(request):
                 # Your Account SID twilio
                 account_sid = "AC29ac10e058d302306bbbd63a523a0f15"
                 # Your Auth Token twilio
-                auth_token  = "af9cd927f3840a8454f7e81465fa9cb5"
+                auth_token  = "b3cd2fac3ad03b3e05995b9ddfe9d25c"
 
                 client = Client(account_sid, auth_token)
                 verification = client.verify \
@@ -270,7 +273,7 @@ def otp_verification(request,phone_number):
 
         otp_input =  request.POST['number']
         account_sid = "AC29ac10e058d302306bbbd63a523a0f15"
-        auth_token = "af9cd927f3840a8454f7e81465fa9cb5"
+        auth_token = "b3cd2fac3ad03b3e05995b9ddfe9d25c"
         client = Client(account_sid, auth_token)
         verification_check = client.verify \
                                 .services("VA38cc8734ac2db4a918b56a6bd98030c7") \
@@ -280,23 +283,16 @@ def otp_verification(request,phone_number):
         
         if verification_check.status == "approved":
             messages.success(request,"OTP verified successfully.")
-            user = Account.objects.get(email=user_name)
+            user = Account.objects.get(username=user_name)
             user.is_active = True   
-            user.Phone_number = phone_number        
+            user.phone_number = phone_number        
             user.save()          
             messages.success(request,"registered successfully")
             return redirect ('signin')
         else:
-            if Account.objects.filter( username = user_name).exists():
-                print("''''''''''''''''''''''''''''")
-                user = Account.objects.filter(username = user_name)
-                user.delete()
-                messages.success(request,"register unsuccessfull")
-                return redirect ('signup')
-            else :
-                print("Entering else statementt")
-                messages.success(request,"register unsuccessfull")
-                return redirect ('signup')
+            print("Entering else statementt")
+            messages.success(request,"Invalid OTP")
+            return redirect ('signup')
 
     else:
         return render (request, 'reg/verification.html')
@@ -729,3 +725,8 @@ def ref_cod_v(request):
         'usr': usr
     }
     return render(request, 'user/refferal.html', context)
+
+
+
+
+
