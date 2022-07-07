@@ -131,9 +131,8 @@
                             
                             <th class="checkout-image">Image</th>
                             <th class="checkout-description">Description</th>
-                            <th class="checkout-model">Model</th>
                             <th class="checkout-quantity">Quantity</th>
-                            <th class="checkout-price">Price</th>
+                            <th class="checkout-price "  >Price</th>
                             <!-- <th class="checkout-total">Total</th> -->
                             
                           </tr>
@@ -148,9 +147,26 @@
                               <p><strong>{{cart_item.quantity}}</strong>-{{cart_item.product.description}}</p>
                               <em>More info is here</em>
                             </td>
-                            <td class="checkout-model">Rev.193</td>
-                            <td class="checkout-quantity">{{cart_item.quantity}}</td>
-                            <td class="checkout-price"><strong><span>Rs.</span>{{cart_item.product.price}}</strong></td>
+                           <td class="checkout-quantity">  {{cart_item.quantity}}  </td>
+
+                            {% if cart_item.product.pro_offer %}  
+                            <td
+                              class="checkout-price "><strong><span>Rs.</span>{{cart_item.product.pro_offer.discount|mul:cart_item.product.price|div:100|sub:cart_item.product.price|abs|mul:cart_item.quantity}}</strong>
+
+                            </td>
+                            {% elif coupon %}
+                            <td
+                            
+                            class="checkout-price"><strong><span>Rs.</span>{{final_price|floatformat:2}}</strong>
+                           
+                           </td>
+                            {% else %}
+                            <td
+                            
+                             class="checkout-price"><strong><span>Rs.</span>{{cart_item.product.price}}</strong>
+                            
+                            </td>
+                            {% endif %}
                             <!-- <td class="checkout-total"><strong><span>Rs.</span>{{product.total}}</strong></td> -->
                           
                           </tr>
@@ -161,7 +177,12 @@
              
                         <div class="checkout-total-block ">
                           <ul>
-                            {% if  coupon %}
+                            {% if coups %}
+                              <li>
+                                <em>Sub total</em>
+                                <strong class="price"><span>Rs.</span>{{total}}</strong>
+                              </li>
+                            {% elif coupon %}
                             <li>
                               <a href="#" class='text-danger'>Coupon applied
                                 <span class='text-danger'>-{{deduction|floatformat:2}}</span>

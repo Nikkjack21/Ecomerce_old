@@ -1,5 +1,5 @@
 {% extends 'orders/base.html' %}
-
+{% load mathfilters  %}
 {% block content %}
 {% load static %}
 <div class="container mb-5">
@@ -52,7 +52,12 @@
                       </td>
                       
                      <td class="checkout-quantity" style="text-align: center;" >{{cart_item.quantity}}</td>
-                     {% if coupon %}
+
+                     {% if cart_item.product.pro_offer %}
+                     <td class="checkout-price"style="text-align: right;"><strong><span>Rs.</span>{{cart_item.product.pro_offer.discount|mul:cart_item.product.price|div:100|sub:cart_item.product.price|abs|mul:cart_item.quantity}}</strong></td>
+                     {% elif coups %}
+                     <td class="checkout-price"style="text-align: right;"><strong><span>Rs.</span>{{cart_item.product.price}}</strong></td>
+                     {% elif coupon %}
                      <td class="checkout-price"style="text-align: right;"><strong><span>Rs.</span>{{final_price|floatformat:2}}</strong></td>
                      {% else %}
                       <td class="checkout-price"style="text-align: right;"><strong><span>Rs.</span>{{cart_item.product.price}}</strong></td>
@@ -95,7 +100,12 @@
 
 		<div class="card">
 		<div class="card-body">
-      {% if coupon %}
+      {% if coups %}
+      <dl class="dlist-align">
+        <dt>Total price:</dt>
+        <dd class="text-right pt-0">{{total}}</dd>
+      </dl>
+      {% elif coupon %}
       <dl class="dlist-align">
         <dt>Total price:</dt>
         <dd class="text-right pt-0">{{final_price|floatformat:2}}</dd>
@@ -122,7 +132,7 @@
       <div id="paypal-button-container">
        
       </div>
-      <button class="btn btn_1 mt-3"  style="padding:17px 35px" id="rzp-button1">Pay with Razorpay</button>
+      <button class="btn btn_1 mt-3"  style="padding:17px 35px"  id="rzp-button1">Pay with Razorpay</button>
       <a href="{% url 'cash_on_delivery' order_data.order_number %}" class="btn btn-primary btn-block"> Cash On Delivery </a>
 
 			<a href="./store.html" class="btn btn-success  btn-block">Continue Shopping</a>

@@ -91,7 +91,6 @@ def add_cart(request, product_id):
 def cart(request, total=0, quantity=0, cart_items=None):
     products  = Product.objects.all().filter(is_available=True)
     try:
-        print('ENTERING TRY BLOCCK')
         tax=0
         grand_total=0
         if request.user.is_authenticated:
@@ -146,6 +145,9 @@ def remove_cart(request, product_id):
         cart_item.delete()
     return redirect('cart')
 
+
+
+
 def remove_cart_item(request, product_id):
 
     product  = get_object_or_404(Product, id=product_id)
@@ -162,7 +164,7 @@ def remove_cart_item(request, product_id):
 
 @login_required(login_url='signin')
 def checkout(request, total=0, quantity=0, cart_items=None, coupon=None, final_price=0,deduction =0):
-    
+    coups = None
     tax=0
     grand_total=0
     profile  = Address.objects.filter(user=request.user).order_by('id')
@@ -193,12 +195,16 @@ def checkout(request, total=0, quantity=0, cart_items=None, coupon=None, final_p
 
         try:
             coupon = Coupon.objects.get(id=coupon_id)
-            if CouponUsedUser.objects.filter(coupon=coupon,user=request.user).exists():
+            coups  = CouponUsedUser.objects.filter(coupon=coupon,user=request.user).exists()
+            if coups:
                 print('Coupon already used')
                 final_price = total
-                messages.successs(request,'Coupon already used')
+                messages.info(request,'Coupon already used')
+                print('Coupon session coups')
+
               
             else:
+                print("entering else coupon statement")
                 deduction = coupon.discount_amount(total)
                 final_price = total-deduction
                 grand_total = tax + final_price
@@ -226,6 +232,8 @@ def checkout(request, total=0, quantity=0, cart_items=None, coupon=None, final_p
         'coupon_apply_form':coupon_apply_form,
         'coupon':coupon,
           'deduction':deduction,
+          'coupon': coupon,
+          'coups': coups,
         
     }
     return render(request, 'check/checkout.html', context)
@@ -244,7 +252,9 @@ def buy_now(request, id):
         tax = 0
         grand_total = 0
         cart_items = Product.objects.get(id=id)
-        total = (cart_items.price * 1)
+        new_price = offer_check_function(cart_items)
+        print(new_price)
+        total = (new_price * 1)
         tax = (2 * total)/100
         grand_total = tax+total
         request.session['cart_items.id']  = cart_items.id
@@ -253,9 +263,9 @@ def buy_now(request, id):
     context ={
        
         'cart_item': cart_items,
-        'totals': total,
-        'taxs': tax,
-        'grand_totals': grand_total, 
+        'total': total,
+        'tax': tax,
+        'grand_total': grand_total, 
         'profile':profile, 
     }
 
@@ -307,10 +317,12 @@ def coupon_apply(request):
         try:
             coupon = Coupon.objects.get(code__iexact=code,valid_from__lte=now,valid_to__gte=now,active=True)
             request.session['coupon_id']=coupon.id
+            print('cooupon exist')
             return redirect('checkout')
         except Coupon.DoesNotExist:
             request.session['coupon_id'] = None
             print('Coupon session not working')
+            messages.info(request, 'Coupon doesnt exist')
             return redirect('checkout')
 
 

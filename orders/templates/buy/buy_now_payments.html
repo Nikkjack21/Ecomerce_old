@@ -94,12 +94,13 @@
 			<p class="text-center mb-3">
 				<img src="{% static 'assets/payments.png' %}" height="26">
 			</p>
-      <button class="btn btn_1 mt-3" style="padding:17px 35px" id="rzp-button1">Pay with Razorpay</button>
+      <button class="btn btn_1 mt-3 w-100" style="padding:17px 35px; background-color: black; color: azure; " id="rzp-button2">Pay with Razorpay</button>
+      
       <div id="paypal-button-container">
        
       </div>
-    
       <a href="{% url 'buy_cod' order_data.order_number cart_items.id  %}" class="btn btn-primary btn-block"> Cash On Delivery </a>
+
 
 			<a href="{% url 'index' %}" class="btn btn-success  btn-block">Continue Shopping</a>
 		</div> <!-- card-body.// -->

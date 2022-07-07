@@ -49,7 +49,6 @@
   <link href="{% static 'assets/corporate/css/style.css' %}" rel="stylesheet">
   <link href="{% static 'assets/corporate/css/style-responsive.css' %}" rel="stylesheet">
   <link href="{% static 'assets/corporate/css/themes/red.css' %}" rel="stylesheet" id="style-color">
-  <link href="{% static 'assets/corporate/css/custom.css' %}" rel="stylesheet">
   <!-- Theme styles END -->
 </head>
 <!-- Head END -->
@@ -178,7 +177,7 @@
                      
                       <span class="span p-2 " style="background-color: rgb(235, 17, 17); position: absolute; color: azure; left: 19rem ">{{product.category.cat_offer.discount}}% off</span>
 
-                      {% elif product.pro_offer %}
+                      {% elif product.pro_offer and product.pro_offer.active == True  %}
 
                       <span class="span p-2 " style="background-color: rgb(235, 17, 17); position: absolute; color: azure; left: 19rem ">{{ product.pro_offer.discount}}% off</span>
 
@@ -190,11 +189,11 @@
                       </div>
                     </div>
                     <h3><a href="{{ product.get_url }}">{{product.product_name}}</a></h3>
-                    {% if  product.category.cat_offer  %}
+                    {% if  product.category.cat_offer and product.category.cat_offer.active == True  %}
                     <div style="color: red; font-size: 15px;" > <del class="text-muted ml-2">&#8377; {{product.price}}</del>
                       &#8377; {{product.category.cat_offer.discount|mul:product.price|div:100|sub:product.price|abs}}
                       </div>
-                    {% elif  product.pro_offer   %}
+                    {% elif  product.pro_offer and product.pro_offer.active == True   %}
                     <div style="color: red; font-size: 15px;" > <del class="text-muted ml-2">&#8377; {{product.price}}</del>
                       &#8377; {{product.pro_offer.discount|mul:product.price|div:100|sub:product.price|abs}}
                       </div>
@@ -491,11 +490,11 @@
 {% endfor %}
 
   
-      <!-- Load javascripts at bottom, this will reduce page load time -->
-      <!-- BEGIN CORE PLUGINS (REQUIRED FOR ALL PAGES) -->
-      <!--[if lt IE 9]>
-      <script src="assets/plugins/respond.min.js"></script>  
-      <![endif]-->
+  <!-- Load javascripts at bottom, this will reduce page load time -->
+  <!-- BEGIN CORE PLUGINS (REQUIRED FOR ALL PAGES) -->
+  <!--[if lt IE 9]>
+  <script src="assets/plugins/respond.min.js"></script>  
+  <![endif]-->
       <script src="{% static 'assets/plugins/jquery.min.js' %}" type="text/javascript"></script>  
       <script src="{% static 'assets/plugins/jquery-migrate.min.js' %}" type="text/javascript"></script>
       <script src="{% static 'assets/plugins/bootstrap/js/bootstrap.min.js' %}" type="text/javascript"></script>      

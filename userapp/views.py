@@ -30,8 +30,9 @@ from django. db. models import Q
 
 def index(request):
     products = Product.objects.all().filter(is_available=True)
-    pop   = Product.objects.all().filter(is_available=True)[6:]
-    return render(request, 'user/shop-index.html', {'products':products, 'pop':pop})
+    pop   = Product.objects.all().filter(is_available=True)[9:12]
+    slider   = Product.objects.all().filter(is_available=True)[17:]
+    return render(request, 'user/shop-index.html', {'products':products, 'pop':pop, 'slider': slider})
 
 
 

@@ -94,7 +94,16 @@ input{
                                                 <tr>
                                                     <td>{{item.product.product_name}}</td>
                                                     <td class="text-center">{{item.quantity}}</td>
+
+                                                    {% if item.product.pro_offer %}
+                                                    <td class="text-center">&#8377; {{item.product.pro_offer.discount|mul:item.product.price|div:100|sub:item.product.price|abs|mul:item.quantity}}</td>
+                                                    {% elif coups %}
                                                     <td class="text-center">&#8377; {{item.product.price}}</td>
+                                                    {% elif coupon %}
+                                                    <td class="text-center">&#8377; {{final_price|floatformat:2}}</td>
+                                                    {% else %}
+                                                    <td class="text-center">&#8377; {{item.product.price}}</td>
+                                                    {% endif %}
                                                 </tr>
                                                 {% endfor %}
                             
@@ -102,7 +111,7 @@ input{
                                             <tfoot>
                                                 <tr>
                                                     <th colspan="2" class="text-right">Sub Total:</th>
-                                                    <th class="text-center">&#8377; {{order.order_total|sub:order.tax}}</th>
+                                                    <th class="text-center">&#8377; {{total|sub:order.tax}}</th>
                                                 </tr>
                                                 <tr>
                                                     <th colspan="2" class="text-right">Tax:</th>

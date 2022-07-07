@@ -57,7 +57,6 @@
   <link href="{% static 'assets/corporate/css/style.css' %}" rel="stylesheet">
   <link href="{% static 'assets/corporate/css/style-responsive.css' %}" rel="stylesheet">
   <link href="{% static 'assets/corporate/css/themes/red.css' %}" rel="stylesheet" id="style-color">
-  <link href="{% static 'assets/corporate/css/custom.css' %}" rel="stylesheet">
   <!-- Theme styles END -->
 </head>
 <!-- Head END -->
@@ -416,7 +415,7 @@
         var csrftoken           = getCookie('csrftoken');
         var orderID             = "{{order_data.order_number}}"
         var payment_method      = 'Paypal'
-        var redirect_url        = "{% url 'paypal_success' %}"
+        var redirect_url        = "{% url 'success' %}"
         // Render the PayPal button into #paypal-button-container
         paypal.Buttons({
       
@@ -477,9 +476,8 @@
     <!-- PAYPAL END -->
 
 
+    <form href="{% url 'razor_success' %}" method="POST">
 
-
-      
       <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
       <script>
       var options = {
@@ -510,12 +508,12 @@
 
       };
       var rzp1 = new Razorpay(options);
-      document.getElementById('rzp-button1').onclick = function(e){
+      document.getElementById('rzp-button2').onclick = function(e){
           rzp1.open();
           e.preventDefault();
       }
       </script>
-
+    </form>
 
 
 
