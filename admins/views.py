@@ -1,10 +1,5 @@
 import datetime
-from email.mime import image
-from multiprocessing import context
 import os
-from pydoc import pager
-from threading import local
-from unicodedata import category, name
 from django.contrib import messages
 from django.shortcuts import redirect, render
 from django.contrib.auth import authenticate,login, logout
@@ -18,8 +13,6 @@ from orders.models import Order, OrderProduct, Payment, RazorPay
 from cartapp.models import CategoryOffer, Coupon, ProductOffer
 from .forms import CouponAdminForm, OrderEditForm, ProductOfferForm, CategoryOfferForm
 from django.db.models import Sum,Count
-from decimal import Decimal
-from django.utils.text import Truncator
 from django.db.models.functions import TruncDate, TruncDay, TruncMonth, TruncWeek
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.db.models.functions import ExtractMonth,ExtractDay

@@ -1,9 +1,6 @@
 
-from email import message
 from multiprocessing import context
 import random
-from turtle import home
-from unicodedata import category
 from django.shortcuts import get_object_or_404, redirect, render
 from django.http import HttpRequest, HttpResponse
 from django.contrib.auth import authenticate,login,logout
@@ -23,7 +20,6 @@ from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator
 from cartapp.views import _cart_id, cart
 from django.http import HttpResponse
 from accounts.forms import UserForm, UserProfileForm
-from django. db. models import Q
 
 
 
@@ -97,7 +93,7 @@ def otp(request):
         phone_number = request.POST['phone_number']
         if mobile == phone_number:
             account_sid     = 'AC29ac10e058d302306bbbd63a523a0f15'
-            auth_token      = 'b3cd2fac3ad03b3e05995b9ddfe9d25c'
+            auth_token      = settings.AUTH_TOKEN
 
             client      = Client(account_sid, auth_token)
             global otp
@@ -221,7 +217,7 @@ def phone_verification(request):
                 # Your Account SID twilio
                 account_sid = "AC29ac10e058d302306bbbd63a523a0f15"
                 # Your Auth Token twilio
-                auth_token  = "b3cd2fac3ad03b3e05995b9ddfe9d25c"
+                auth_token  = settings.AUTH_TOKEN
 
                 client = Client(account_sid, auth_token)
                 verification = client.verify \
@@ -274,7 +270,7 @@ def otp_verification(request,phone_number):
 
         otp_input =  request.POST['number']
         account_sid = "AC29ac10e058d302306bbbd63a523a0f15"
-        auth_token = "b3cd2fac3ad03b3e05995b9ddfe9d25c"
+        auth_token = settings.AUTH_TOKEN
         client = Client(account_sid, auth_token)
         verification_check = client.verify \
                                 .services("VA38cc8734ac2db4a918b56a6bd98030c7") \

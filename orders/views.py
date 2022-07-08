@@ -255,6 +255,9 @@ def place_order(request, total=0, quantity=0, coups=None, coupon=None):
 
 
                 grand_total = grand_total
+            data.order_total            = grand_total
+            print("ENtering last data save")
+            data.save()
 
 
 

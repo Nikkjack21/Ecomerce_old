@@ -242,7 +242,7 @@ def checkout(request, total=0, quantity=0, cart_items=None, coupon=None, final_p
     
 
 
-
+@login_required (login_url='signin')
 def buy_now(request, id):
     try:
         print('ENTERED BUY NOW')

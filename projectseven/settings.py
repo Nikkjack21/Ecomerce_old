@@ -169,3 +169,5 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 RAZORPAY_KEY_ID = "rzp_test_jZKCHvKdz0LDRB"
 RAZORPAY_KEY_SECRET = "5X5gp22MmsMegP3810rkuJBE"
+
+AUTH_TOKEN  = config('AUTH_TOKEN')

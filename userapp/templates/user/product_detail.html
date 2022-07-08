@@ -109,7 +109,7 @@
                       
                       <em><i class="fa fa-inr"></i> <del>1500</del> </em>
                     </div>
-                    {% if single_product.stock %}
+                    {% if  single_product.stock %}
                     <div class="availability">
                       Availability: <strong>In Stock</strong>
                     </div>
@@ -399,7 +399,7 @@
     </div>
     <!-- END STEPS -->
 
-     <!-- END PRE-FOOTER -->
+    {% include 'user/prefooter.html' %}
   
       <!-- BEGIN FOOTER -->
       <div class="footer">
