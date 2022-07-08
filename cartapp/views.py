@@ -7,7 +7,6 @@ from django.shortcuts import get_object_or_404, render, redirect
 from django.urls import reverse
 from accounts.models import Address, UserProfile
 from store.models import Product
-from category.models import Category
 from .models import Cart, CartItem, Coupon, CouponUsedUser, ProductOffer, CategoryOffer
 from django.core.exceptions import ObjectDoesNotExist
 from django.contrib.auth.decorators import login_required
