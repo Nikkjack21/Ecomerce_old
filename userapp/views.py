@@ -48,7 +48,6 @@ def signin(request):
 
             if user is not None:
                 try:
-                    print("ENtering try BLock")
                     cart        = Cart.objects.get(cart_id=_cart_id(request))
                     is_cart_item_exists    = CartItem.objects.filter(cart=cart).exists()
                     print(is_cart_item_exists)
@@ -61,7 +60,6 @@ def signin(request):
                             print(cart_item.user)
                             cart_item.save()
                 except:
-                    print("ENtering Except BLock")
                     pass
                 login(request, user)
                 wall = Wallet.objects.filter(user=request.user).exists()
@@ -329,7 +327,7 @@ def pro_store(request, id):
         'products': products,
         'categ': categ,
         'main_cate': main_cat,
-      
+    
     }
 
     return render(request, 'user/products.html', context)

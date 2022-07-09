@@ -18,7 +18,6 @@ def menu_links(request):
 def cart_count(request):
 
     try:
-        print('ENTERING TRY BLOCCK')
         tax=0
         total=0
         quantity=0
@@ -28,7 +27,6 @@ def cart_count(request):
             print("USER IS REQUESTED")
             cart_items   = CartItem.objects.filter(user=request.user, is_active=True).order_by('id')
         else:
-            print("USER IS NOT REQUESTED")          
             cart   = Cart.objects.get(cart_id=_cart_id(request))
             cart_items   = CartItem.objects.filter(cart=cart, is_active=True)
         for cart_item in cart_items:
