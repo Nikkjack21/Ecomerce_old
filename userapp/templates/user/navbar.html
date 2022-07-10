@@ -1,0 +1,140 @@
+{% load static %}
+    <!-- BEGIN TOP BAR -->
+    <div class="pre-header  ">
+        <div class="container" >
+            <div class="row">
+                <!-- BEGIN TOP BAR LEFT PART -->
+                <div class="col-md-6 col-sm-6 additional-shop-info">
+                
+                </div>
+                <!-- END TOP BAR LEFT PART -->
+                <!-- BEGIN TOP BAR MENU -->
+                <div class="col-md-6 col-sm-6 additional-nav">
+                    <ul class="list-unstyled list-inline pull-right">
+                      <li><a href="{% url 'my_account' %}">My Account</a></li>
+                      <li><a href=" #">My Wishlist</a></li>
+                      <li><a href="cart/">Checkout</a></li>
+                      {% if user.is_authenticated %}
+                      <li>Welcome, {{user.username}}</li>
+                    <li><a href="{% url 'signout'%}">Log Out</a></li>
+                      {% else %}
+
+                        <li><a href="signin/">Log In</a></li>
+
+                        {% endif %}
+                    </ul>
+                </div>
+                <!-- END TOP BAR MENU -->
+            </div>
+        </div>        
+    </div>
+    <!-- END TOP BAR -->
+
+    <!-- BEGIN HEADER -->
+    <div class="header" >
+      <div class="container  ">
+        <a class="site-logo" href="/"><img src="{% static 'assets/corporate/img/logos/resizeZhea-logos1.svg' %}" alt="Zhea Fashion"></a>
+        <a href="javascript:void(0);" class="mobi-toggler"><i class="fa fa-bars"></i></a>
+
+        <!-- BEGIN CART -->
+        <div class="top-cart-block">
+          <div class="top-cart-info">
+            <a href="javascript:void(0);" class="top-cart-info-count">{{cart_count}} items</a>
+            <a href="javascript:void(0);" class="top-cart-info-value">₹ {{grand_total}}</a>
+          </div>
+          <i class="fa fa-shopping-cart"> </i>
+                        
+          <div class="top-cart-content-wrapper">
+            <div class="top-cart-content">
+              {% if cart_items%}
+              <ul class="scroller" style="height: 250px;">
+                {% for cart_item in cart_items %}
+              
+                <li>
+                  <a href="#"><img src="{{cart_item.product.images.url}}" alt="Rolex Classic Watch" width="37" height="34"></a>
+                  <span class="cart-content-count">x {{cart_item.quantity}}</span>
+                  <strong><a href="{{product.get_url}}">{{cart_item.product.product_name}}</a></strong>
+                  <em>₹{{cart_item.product.price}}</em>
+                  <a href="javascript:void(0);" class="del-goods">&nbsp;</a>
+                </li>
+                {% endfor %}
+
+                {% else %}
+                  <h3>Oops! Your cart is empty</h3>
+              
+              
+              </ul> 
+              {% endif %}
+
+              <div class="text-right">
+                <a href="{% url 'cart' %}" class="btn btn-default">View Cart</a>
+                <a href="shop-checkout.html" class="btn btn-primary">Checkout</a>
+              </div>
+            </div>
+          </div>            
+        </div>
+        <!--END CART -->
+
+        <!-- BEGIN NAVIGATION -->
+        <div class="header-navigation ">
+          <ul>
+            <li >
+              <a href="{% url 'all_products'  %}">
+                All Products
+                
+              </a>
+            
+              {% for main in main_cat %}
+              
+            <li class="dropdown dropdown-megamenu">
+             
+              <a class="dropdown-toggle"  href="">
+                {{main.name}} 
+                
+              </a>
+                
+              <!-- BEGIN DROPDOWN MENU -->
+              <ul class="dropdown-menu">
+                {% for cat in main.subcategory.all %}
+                <li class="dropdown-submenu">
+                
+                  <a tabindex="-1" href="{% url 'products_by_cat' cat.id %}">{{cat.category_name}} <i class="fa fa-angle-right"></i></a>
+     
+                
+                 </li>
+                 {% endfor %}
+               
+              </ul> 
+              <!-- END DROPDOWN MENU -->
+           
+            </li>
+            {% endfor %}
+         
+            
+      
+          
+              
+            
+
+            <!-- BEGIN TOP SEARCH -->
+            <li class="menu-search">
+              <span class="sep"></span>
+              <i class="fa fa-search search-btn"></i>
+              <div class="search-box">
+                <form action="#">
+                  <div class="input-group">
+                    <input type="text" placeholder="Search" class="form-control">
+                    <span class="input-group-btn">
+                      <button class="btn btn-primary" type="submit">Search</button>
+                    </span>
+                  </div>
+                </form>
+              </div> 
+            </li>
+            <!-- END TOP SEARCH -->
+          </ul>
+        </div>
+        <!-- END NAVIGATION -->
+      </div>
+    </div>
+    <!-- Header END -->

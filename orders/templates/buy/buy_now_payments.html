@@ -1,0 +1,128 @@
+{% extends 'buy/base.html' %}
+
+{% block content %}
+{% load static %}
+<div class="container mb-5">
+
+<div class="row">
+	<aside class="col-lg-8">
+        <div class="card">
+            <h5 class="card-header">Billing Addresse</h5>
+            <div class="card-body ">
+            
+              <p class="mb-1">{{order_data.first_name}}</p>
+              <p class="mb-1">{{order_data.address_line_1}},</p>
+              <p class="mb-1"></p>
+              <p class="mb-1">{{order_data.email}}</p>
+              <p class="mb-1">{{order_data.city}}, {{order_data.state}}</p>
+              <p class="mb-1">{{order_data.country}}</p>
+              
+            </div>
+          </div>
+
+          
+        <!-- <div class="card">
+            <h5 class="card-header">Payment Method</h5>
+            <div class="card-body">
+            
+              <p class="card-text">Cash On Delivery</p>
+              
+            </div>
+          </div> -->
+
+        <div class="card">
+            <h5 class="card-header">Review Product</h5>
+            <div class="card-body">
+                <table class="col-md-11" >
+                       
+                    <tr>
+                      
+                      <th class="checkout-image">Image</th>
+                      <th class="checkout-image"style="text-align: center;">Name</th>
+                 
+                    
+                      <th class="checkout-quantity" style="text-align: center;">Quantity</th>
+                      <th class="checkout-price" style="text-align: center; float: right;">Price</th>
+                   
+                      
+                    </tr>
+                   
+                    <tr>
+                    
+                      <td class="checkout-image">
+                        <a href="javascript:;"><img src="{{cart_items.images.url}}" alt=""></a>
+                      </td>
+                      <td class="checkout-description">
+                        <a href="javascript:;">{{cart_items.product_name}}</a>
+                        
+                      </td>
+                      
+                     <td class="checkout-quantity" style="text-align: center;" >x1</td>
+                      <td class="checkout-price"style="text-align: right;"><strong><span>Rs.</span>{{cart_items.price}}</strong></td>
+                      
+                    
+                    </tr>
+                   
+                  </table>
+
+
+          
+              
+            </div>
+          </div>
+
+
+
+	</aside> <!-- col.// -->
+	<aside class="col-lg-4">
+
+		<div class="card">
+		<div class="card-body">
+			<dl class="dlist-align">
+			  <dt>Total price:</dt>
+			  <dd class="text-right pt-0">{{total}}</dd>
+			</dl>
+			<dl class="dlist-align">
+			  <dt>Tax:</dt>
+			  <dd class="text-right">{{tax}}</dd>
+			</dl>
+			<dl class="dlist-align">
+			  <dt>Total:</dt>
+			  <dd class="text-right text-dark b"><strong>{{grand_total}}</strong></dd>
+			</dl>
+			<hr>
+			<p class="text-center mb-3">
+				<img src="{% static 'assets/payments.png' %}" height="26">
+			</p>
+      <button class="btn btn_1 mt-3 w-100" style="padding:17px 35px; background-color: black; color: azure; " id="rzp-button2">Pay with Razorpay</button>
+      
+      <div id="paypal-button-container">
+       
+      </div>
+      <a href="{% url 'buy_cod' order_data.order_number cart_items.id  %}" class="btn btn-primary btn-block"> Cash On Delivery </a>
+
+
+			<a href="{% url 'index' %}" class="btn btn-success  btn-block">Continue Shopping</a>
+		</div> <!-- card-body.// -->
+		</div> <!-- card.// -->
+
+</aside> 
+
+
+</div> 
+
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+ {% endblock %}

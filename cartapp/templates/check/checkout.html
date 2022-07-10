@@ -1,0 +1,334 @@
+{% extends 'check/bases.html' %}
+{% load mathfilters%}
+{% block content %}
+
+
+<div class="main">
+    <div class="container">
+      <ul class="breadcrumb">
+          <li><a href="index.html">Home</a></li>
+          <li><a href="">Store</a></li>
+          <li class="active">Checkout</li>
+      </ul>
+      <!-- BEGIN SIDEBAR & CONTENT -->
+      <div class="col margin-bottom-40">
+        <!-- BEGIN CONTENT -->
+
+<!-----SLECT ADDRESS-------->
+
+ <style>
+          
+.cool {
+  width: 100%;
+  margin: 0 auto;
+  
+
+}
+
+
+.hot {
+    width: 100%;
+   
+
+}
+
+.card-input-element {
+    display: none;
+}
+
+.card-input {
+    margin: 10px;
+    padding: 0px;
+}
+
+.card-input:hover {
+    cursor: pointer;
+}
+
+.card-input-element:checked + .card-input {
+     box-shadow: 0 0 1px 1px #2ecc71;
+}
+
+
+  </style>
+
+      <form action="{% url 'place_order' %}" method="POST">
+          {% csrf_token %}
+
+    
+        <div class="cool  " >
+  
+          <h1>Select address</h1>
+          
+          <div class="grid" >
+            
+              <div class="col-md-5 d-flex " style="width: 80%;">
+                {% for adr in profile %}
+               
+                <label class="hot" >
+                 
+                  <input type="radio" name="selection" value="{{adr.id}}" selected checked class="card-input-element " />
+        
+                    <div class="card card-default card-input">
+                      <div class="card-header">{{adr.name}}</div>
+                      <div class="card-body">
+                        <p> {{adr.phone}}</p>
+                        <p> {{adr.address_line}}</p>
+                        <p> {{adr.pincode}}</p>
+                        <p> {{adr.city}}, {{adr.state}}</p>
+                        <p>{{adr.country}}</p>
+                        
+                      </div>
+                    </div>
+                   
+                </label>
+               
+                {% endfor %}
+              </div>
+          </div>
+          
+        
+        
+
+      </div>
+
+ 
+
+
+
+
+
+<!-----END ---SLECT ADDRESS-------->
+
+
+        <div class="col-md-12 col-sm-12">
+          <h1>Checkout</h1>
+          
+          <!-- BEGIN CHECKOUT PAGE -->
+          <div class="panel-group checkout-page accordion scrollable" id="checkout-page">
+
+
+            <!-- BEGIN SHIPPING ADDRESS -->
+            <div id="shipping-address" class="panel panel-default">
+              <div class="panel-heading">
+                <h2 class="panel-title">
+                  <a data-toggle="collapse" data-parent="#checkout-page" href="{% url 'checkout_add_address' %}" class="accordion-toggle collapsed" aria-expanded="true">
+                  
+                <input type="radio" style="display: none;" name="selection" value="typeadr" id=""> Add Address
+                
+                  
+                  </a>
+                </h2>
+              </div>
+            
+                  <div id="confirm-content" class="panel-collapse ">
+                    <div class="panel-body row">
+                      <div class="col-md-12 clearfix">
+                        <div class="table-wrapper-responsive">
+                        <table>
+                       
+                          <tr>
+                            
+                            <th class="checkout-image">Image</th>
+                            <th class="checkout-description">Description</th>
+                            <th class="checkout-quantity">Quantity</th>
+                            <th class="checkout-price "  >Price</th>
+                            <!-- <th class="checkout-total">Total</th> -->
+                            
+                          </tr>
+                          {% for cart_item in cart_items %}
+                          <tr>
+                          
+                            <td class="checkout-image">
+                              <a href="javascript:;"><img src="{{cart_item.product.images.url}}" alt="Berry Lace Dress"></a>
+                            </td>
+                            <td class="checkout-description">
+                              <h3><a href="javascript:;">{{cart_item.product.product_name}}</a></h3>
+                              <p><strong>{{cart_item.quantity}}</strong>-{{cart_item.product.description}}</p>
+                              <em>More info is here</em>
+                            </td>
+                           <td class="checkout-quantity">  {{cart_item.quantity}}  </td>
+
+                            {% if cart_item.product.pro_offer %}  
+                            <td
+                              class="checkout-price "><strong><span>Rs.</span>{{cart_item.product.pro_offer.discount|mul:cart_item.product.price|div:100|sub:cart_item.product.price|abs|mul:cart_item.quantity}}</strong>
+
+                            </td>
+                            {% elif coupon %}
+                            <td
+                            
+                            class="checkout-price"><strong><span>Rs.</span>{{final_price|floatformat:2}}</strong>
+                           
+                           </td>
+                            {% else %}
+                            <td
+                            
+                             class="checkout-price"><strong><span>Rs.</span>{{cart_item.product.price}}</strong>
+                            
+                            </td>
+                            {% endif %}
+                            <!-- <td class="checkout-total"><strong><span>Rs.</span>{{product.total}}</strong></td> -->
+                          
+                          </tr>
+                          {% endfor %}
+                        </table>
+                       
+                        </div>
+             
+                        <div class="checkout-total-block ">
+                          <ul>
+                            {% if coups %}
+                              <li>
+                                <em>Sub total</em>
+                                <strong class="price"><span>Rs.</span>{{total}}</strong>
+                              </li>
+                            {% elif coupon %}
+                            <li>
+                              <a href="#" class='text-danger'>Coupon applied
+                                <span class='text-danger'>-{{deduction|floatformat:2}}</span>
+                              </a>
+                            </li>
+                            <li class="checkout-total-price">
+                              <em>Sub total</em>
+                              <strong class="price"><span>Rs.</span>{{final_price|floatformat:2}}</strong>
+                            </li>
+                            {% else %}
+                            <li>
+                              <em>Sub total</em>
+                              <strong class="price"><span>Rs.</span>{{total}}</strong>
+                            </li>
+                            {% endif %}
+   
+                              <em>Tax</em>
+                              <strong class="price"><span>Rs.</span>{{tax}}</strong>
+                            </li>
+                            {% if  coupon %}
+                          
+                            <li class="checkout-total-price">
+                              <em>Total</em>
+                              <strong class="price"><span>Rs.</span>{{grand_total}}</strong>
+                            </li>
+                            {% else %}
+                            <li class="checkout-total-price">
+                              <em>Total</em>
+                              <strong class="price"><span>Rs.</span>{{grand_total}}</strong>
+                            </li>
+                            {% endif %}
+                          </ul>
+                        </div>
+                    
+                        <div class="clearfix"></div>
+                        <button class="btn btn-primary pull-right" name="submit" type="submit" id="button-confirm">Proceeed to payments</button>
+                        <button type="button" class="btn btn-default pull-right margin-right-20">Cancel</button>
+                      </div>
+                    </div>
+                  </div>
+                </form>
+                <div class="d-flex">
+              
+
+                    <form action="{% url 'coupon_apply' %}" method="POST">
+                      {% csrf_token %}
+                    <div class="input-group">
+                      {{coupon_apply_form}}
+                      <div class="input-group-append">
+
+                        <button type="submit" class="btn-success">Apply Coupon</button>
+                      </div>
+                    </div>
+                  </form>
+            
+
+                
+                </div>
+                </div>
+              </div>
+            </div>
+            <!-- END SHIPPING ADDRESS -->
+
+            <!-- BEGIN SHIPPING METHOD -->
+            <!-- <div id="shipping-method" class="panel panel-default">
+              <div class="panel-heading">
+                <h2 class="panel-title">
+                  <a data-toggle="collapse" data-parent="#checkout-page" href="#shipping-method-content" class="accordion-toggle">
+                    Step 4: Delivery Method
+                  </a>
+                </h2>
+              </div>
+              <div id="shipping-method-content" class="panel-collapse collapse">
+                <div class="panel-body row">
+                  <div class="col-md-12">
+                    <p>Please select the preferred shipping method to use on this order.</p>
+                    <h4>Flat Rate</h4>
+                    <div class="radio-list">
+                      <label>
+                        <input type="radio" name="FlatShippingRate" value="FlatShippingRate"> Flat Shipping Rate
+                      </label>
+                    </div>
+                    <div class="form-group">
+                      <label for="delivery-comments">Add Comments About Your Order</label>
+                      <textarea id="delivery-comments" rows="8" class="form-control"></textarea>
+                    </div>
+                    <button class="btn btn-primary  pull-right" type="submit" id="button-shipping-method" data-toggle="collapse" data-parent="#checkout-page" data-target="#payment-method-content">Continue</button>
+                  </div>
+                </div>
+              </div>
+            </div> -->
+            <!-- END SHIPPING METHOD -->
+
+            <!-- BEGIN PAYMENT METHOD -->
+            <!-- <div id="payment-method" class="panel panel-default">
+              <div class="panel-heading">
+                <h2 class="panel-title">
+                  <a data-toggle="collapse" data-parent="#checkout-page" href="#payment-method-content" class="accordion-toggle">
+                    Step 5: Payment Method
+                  </a>
+                </h2>
+              </div>
+              <div id="payment-method-content" class="panel-collapse collapse">
+                <div class="panel-body row">
+                  <div class="col-md-12">
+                    <p>Please select the preferred payment method to use on this order.</p>
+                    <div class="radio-list">
+                      <label>
+                        <input type="radio" name="CashOnDelivery" value="CashOnDelivery"> Cash On Delivery
+                      </label>
+                    </div>
+                    <div class="form-group">
+                      <label for="delivery-payment-method">Add Comments About Your Order</label>
+                      <textarea id="delivery-payment-method" rows="8" class="form-control"></textarea>
+                    </div>
+                    <button class="btn btn-primary  pull-right" type="submit" id="button-payment-method" data-toggle="collapse" data-parent="#checkout-page" data-target="#confirm-content">Continue</button>
+                    <div class="checkbox pull-right">
+                      <label>
+                        <input type="checkbox"> I have read and agree to the <a title="Terms & Conditions" href="javascript:;">Terms & Conditions </a> &nbsp;&nbsp;&nbsp; 
+                      </label>
+                    </div>  
+                  </div>
+                </div>
+              </div>
+            </div> -->
+            <!-- END PAYMENT METHOD -->
+
+            <!-- BEGIN CONFIRM -->
+          
+
+            </div>
+            <!-- END CONFIRM -->
+          </div>
+          <!-- END CHECKOUT PAGE -->
+        </div>
+        <!-- END CONTENT -->
+      </div>
+      <!-- END SIDEBAR & CONTENT -->
+    </div>
+  </div>
+
+
+
+
+
+
+
+
+{% endblock %}

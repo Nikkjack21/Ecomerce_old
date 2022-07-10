@@ -1,0 +1,167 @@
+{% extends 'orders/base.html' %}
+{% load mathfilters  %}
+{% block content %}
+{% load static %}
+<div class="container mb-5">
+
+<div class="row">
+	<aside class="col-lg-8">
+        <div class="card">
+            <h5 class="card-header">Billing Addresse</h5>
+            <div class="card-body ">
+            
+              <p class="mb-1">{{order_data.first_name}}</p>
+              <p class="mb-1">{{order_data.phone}}</p>
+              <p class="mb-1">{{order_data.address_line_1}},</p>
+            
+              <p class="mb-1">{{order_data.email}}</p>
+              <p class="mb-1">{{order_data.city}}, {{order_data.state}}</p>
+              <p class="mb-1">{{order_data.country}}</p>
+              
+            </div>
+          </div>
+
+          
+  
+
+        <div class="card">
+            <h5 class="card-header">Review Product</h5>
+            <div class="card-body">
+                <table class="col-md-11" >
+                       
+                    <tr>
+                      
+                      <th class="checkout-image">Image</th>
+                      <th class="checkout-image"style="text-align: center;">Name</th>
+                 
+                    
+                      <th class="checkout-quantity" style="text-align: center;">Quantity</th>
+                      <th class="checkout-price" style="text-align: center; float: right;">Price</th>
+                   
+                      
+                    </tr>
+                    {% for cart_item in cart_itemss %}
+                    <tr>
+                    
+                      <td class="checkout-image">
+                        <a href="javascript:;"><img src="{{cart_item.product.images.url}}" alt="Berry Lace Dress"></a>
+                      </td>
+                      <td class="checkout-description">
+                        <a href="javascript:;">{{cart_item.product.product_name}}</a>
+                        
+                      </td>
+                      
+                     <td class="checkout-quantity" style="text-align: center;" >{{cart_item.quantity}}</td>
+
+                     {% if cart_item.product.pro_offer %}
+                     <td class="checkout-price"style="text-align: right;"><strong><span>Rs.</span>{{cart_item.product.pro_offer.discount|mul:cart_item.product.price|div:100|sub:cart_item.product.price|abs|mul:cart_item.quantity}}</strong></td>
+                     {% elif coups %}
+                     <td class="checkout-price"style="text-align: right;"><strong><span>Rs.</span>{{cart_item.product.price}}</strong></td>
+                     {% elif coupon %}
+                     <td class="checkout-price"style="text-align: right;"><strong><span>Rs.</span>{{final_price|floatformat:2}}</strong></td>
+                     {% else %}
+                      <td class="checkout-price"style="text-align: right;"><strong><span>Rs.</span>{{cart_item.product.price}}</strong></td>
+                      {% endif %}
+                    
+                    </tr>
+                    {% endfor %}
+                  </table>
+
+
+                  <!-- <table class="table table-hover">
+                    <thead>
+                      <tr>
+                        <th scope="col">Image</th>
+                        <th scope="col">Quantity</th>
+                        <th scope="col">Price</th>
+                        
+                      </tr>
+                    </thead>
+                    <tbody>
+                      
+                      {% for cart_item in cart_itemss %}
+                      <tr>
+                        
+                        <td><a href="javascript:;"><img src="{{cart_item.product.images.url}}" alt="Berry Lace Dress"></a></td>
+                        <td><a href="javascript:;">{{cart_item.product.product_name}}</a></td>
+                        <td>@<span>Rs.</span>{{cart_item.product.price}}</td>
+                      </tr>
+                      {% endfor %}
+                    </tbody>
+                  </table> -->
+              
+            </div>
+          </div>
+
+
+
+	</aside> <!-- col.// -->
+	<aside class="col-lg-4">
+
+		<div class="card">
+		<div class="card-body">
+      {% if coups %}
+      <dl class="dlist-align">
+        <dt>Total price:</dt>
+        <dd class="text-right pt-0">{{total}}</dd>
+      </dl>
+      {% elif coupon %}
+      <dl class="dlist-align">
+        <dt>Total price:</dt>
+        <dd class="text-right pt-0">{{final_price|floatformat:2}}</dd>
+      </dl>
+{% else %}
+			<dl class="dlist-align">
+			  <dt>Total price:</dt>
+			  <dd class="text-right pt-0">{{total}}</dd>
+			</dl>
+
+      {% endif %}
+			<dl class="dlist-align">
+			  <dt>Tax:</dt>
+			  <dd class="text-right">{{tax}}</dd>
+			</dl>
+			<dl class="dlist-align">
+			  <dt>Total:</dt>
+			  <dd class="text-right text-dark b"><strong>{{grand_total}}</strong></dd>
+			</dl>
+			<hr>
+			<p class="text-center mb-3">
+				<img src="{% static 'assets/payments.png' %}" height="26">
+			</p>
+      <div id="paypal-button-container">
+       
+      </div>
+      <button class="btn btn_1 mt-3"  style="padding:17px 35px"  id="rzp-button1">Pay with Razorpay</button>
+      <a href="{% url 'cash_on_delivery' order_data.order_number %}" class="btn btn-primary btn-block"> Cash On Delivery </a>
+
+			<a href="./store.html" class="btn btn-success  btn-block">Continue Shopping</a>
+		</div> <!-- card-body.// -->
+		</div> <!-- card.// -->
+
+</aside> 
+
+
+</div> 
+
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ {% endblock %}
